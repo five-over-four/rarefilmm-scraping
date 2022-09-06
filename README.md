@@ -9,8 +9,10 @@ Occasionally, however, the only tag was 'Arthouse', so it'll occur in the datase
 
 The data is in the form of a csv file with columns "title", "year", "genre", "country". You can import it into pandas with
 
-  import pandas as pd
-  pd.read_csv(filename)
-  pd.head()
-  
+`
+import pandas as pd
+pd.read_csv(filename)
+pd.head()
+`
+
 The head() command just shows the first 5 or so rows.
