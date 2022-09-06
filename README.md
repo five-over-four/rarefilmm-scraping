@@ -15,6 +15,8 @@ pd.read_csv(filename)
 pd.head()
 ```
 
+(If not installed, just use `pip install pandas` in the terminal or command line.)
+
 The head() command just shows the first 5 or so rows.
 
 ## Some ideas
