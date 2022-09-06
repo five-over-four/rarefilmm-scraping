@@ -88,7 +88,7 @@ def generate_dataframe():
     url_df = pd.read_csv("cleaned_urls.csv", index_col=None)
     number_of_entries = url_df.shape[0]
 
-    # title, year, genre, country, director
+    # title, year, genre, country
     main_df = pd.DataFrame(columns = list(["title", "year", "genre", "country"]))
 
     for i in range(number_of_entries):
