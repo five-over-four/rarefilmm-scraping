@@ -11,7 +11,9 @@ The data is in the form of a csv file with columns "title", "year", "genre", "co
 
 `
 import pandas as pd
+
 pd.read_csv(filename)
+
 pd.head()
 `
 
