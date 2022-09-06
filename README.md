@@ -9,12 +9,17 @@ Occasionally, however, the only tag was 'Arthouse', so it'll occur in the datase
 
 The data is in the form of a csv file with columns "title", "year", "genre", "country". You can import it into pandas with
 
-`
+```
 import pandas as pd
-
 pd.read_csv(filename)
-
 pd.head()
-`
+```
 
 The head() command just shows the first 5 or so rows.
+
+## Some ideas
+One idea for data analysis we discussed was getting the distribution of genres over years and comparing to more popular movies from those eras.
+
+There are also some 'nan' values every now and then, but that just means we'll have more to write about for the report- the process of scraping, the process of cleaning the data, wrangling and whatnot buzzwords we have.
+
+We can also consider other (?) correlations between the datapoints. Years and countries of origin? Even directors? (that code doesn't really work yet)
