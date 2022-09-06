@@ -23,3 +23,7 @@ One idea for data analysis we discussed was getting the distribution of genres o
 There are also some 'nan' values every now and then, but that just means we'll have more to write about for the report- the process of scraping, the process of cleaning the data, wrangling and whatnot buzzwords we have.
 
 We can also consider other (?) correlations between the datapoints. Years and countries of origin? Even directors? (that code doesn't really work yet)
+
+## Statistical biases
+
+- The site isn't guaranteed to have randomly sampled 'rare' movies. They can have a bias toward certain time periods or countries or styles, such as german expressionism. We'll therefore have to preface that our findings are in the context of this database.
