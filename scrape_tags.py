@@ -75,6 +75,8 @@ def get_information(url):
     genre, tags = get_category_and_tags(soup)
     if type(tags) == list:
         country = tags[0]
+        if country == "HD" and len(tags) > 1:
+            country = tags[1]
     else:
         country = nan
 
@@ -88,7 +90,7 @@ def generate_dataframe():
     url_df = pd.read_csv("cleaned_urls.csv", index_col=None)
     number_of_entries = url_df.shape[0]
 
-    # title, year, genre, country
+    # title, year, genre, country, director
     main_df = pd.DataFrame(columns = list(["title", "year", "genre", "country"]))
 
     for i in range(number_of_entries):
@@ -101,7 +103,7 @@ def generate_dataframe():
             print("partial write done! hundred more.")
 
     # movie title, year, genre, country, director
-    main_df.to_csv("finalised_data.csv", index=False)
+    main_df.to_csv("finalised_data2.csv", index=False)
 
 if __name__ == "__main__":    
 
