@@ -2,7 +2,7 @@
 
 [Here](http://rarefilmm.com/) is the website we're using. A directory of old and rare films. Note that this site *does* host some torrents to the films, but as long as we're only taking advantage of the movie information, there shouldn't be any ethical problems in our way.
 
-Note: Use finalised_data2.csv instead. It's got improved country names.
+Note: Use finalised_data2.csv instead. It's got improved country names. A *few* movies still have the country 'HD', but we can fix those manually.
 
 ## The code
 We use beautifulsoup4 and pandas mostly. Code's included in the repo. Some movies had 'Arthouse' as the first tag. In those cases, I opted to choose the second tag, which usually ended up being more descriptive, such as 'Drama'.
