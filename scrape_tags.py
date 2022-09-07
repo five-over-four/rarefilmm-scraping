@@ -62,7 +62,7 @@ def get_title(soup):
     useless_chars_before = 8
     return(whole_title[:index_of_rarefilm - useless_chars_before])
 
-# regex to get SECOND year in url. first is the year the movie entry 
+# regex to get last year in url. first is the year the movie entry 
 # was added to the site.
 def get_year(url):
     return re.findall(r'.*([1-2][0-9]{3}|3000)', url)[0]
