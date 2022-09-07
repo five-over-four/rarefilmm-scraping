@@ -34,6 +34,9 @@ def get_dir_writers(soup):
 def get_category_and_tags(soup):
     
     # the older pages on the site use the lower version, so we need to account for that.
+    # we also prioritise non-arthouse tags first, because many movies will say "arthouse, drama",
+    # and 'drama' is more descriptive. some films ONLY have 'arthouse', which is why the
+    # "if len(data) == 1" is there.
     try:
         category = soup.find(class_="category").text
         if category.strip() == "Arthouse":
