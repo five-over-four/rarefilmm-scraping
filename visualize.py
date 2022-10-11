@@ -14,6 +14,7 @@ for movie_name in df['title']:
     search.movie(query=movie_name)
     if hasattr(search, "results"):
         print('Found ' + movie_name)
+        print(search.results)
         found_movies.append(movie_name)
     i = i + 1
     print("Round " + str(i))
