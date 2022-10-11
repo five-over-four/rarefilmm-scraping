@@ -31,3 +31,7 @@ We can also consider other (?) correlations between the datapoints. Years and co
 ## Statistical biases
 
 - The site isn't guaranteed to have randomly sampled 'rare' movies. They can have a bias toward certain time periods or countries or styles, such as german expressionism. We'll therefore have to preface that our findings are in the context of this database.
+
+## Occurrence of each genre by decade
+![](https://i.imgur.com/mdP0nGQ.jpg)
+Here, we have at each decade (#genre films / #films) to see the distribution of each genre on rarefilmms. For instance, Westerns peak just around 1950s, as they should. https://pastebin.com/2J1Khz12 contains the highest likelihood years for each genre from these distributions. The plots have been smoothed using normal kernels with std 5.
