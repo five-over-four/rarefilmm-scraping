@@ -101,8 +101,9 @@ class Movie:
         """
         We gather and save all the information about the movie into the Movie object.
         All of this is also stored in self.metadata, but pre-formatted.
+        Contains a lot of validation due to missing data in metadata.
         """
-        if self.metadata["genre_ids"]:
+        if self.metadata.keys() and self.metadata["genre_ids"]:
             self.genres = {genre_id: genre["name"] for genre_id in self.metadata["genre_ids"] for genre in tmdb_genres if genre["id"] == genre_id}
         else:
             self.genres = None
@@ -124,6 +125,7 @@ class Movie:
         """
         if not from rarefilmm, just pick the first one. Otherwise try to match
         production year, title, and genre as well. This should lead to better results.
+        Has a bunch of validation due to occasionally missing dictionary keys in results.
         """
         if from_rarefilmm:
             year = self.df["year"]
@@ -133,12 +135,16 @@ class Movie:
             
             for result in search_results:
                 correct_score = 0
-                correct_score += title_similarity(result["original_title"], self.df["title"]) * 2
-                if result["release_date"] and int(result["release_date"][:4]) == year: correct_score += 1
-                elif result["release_date"]:
-                    correct_score += 1 / (abs(int(result["release_date"][:4]) - year) + 1)
-                if genre in translate_ids_to_genres(result["genre_ids"]): correct_score += 1
+                if "original_title" in result.keys():
+                    correct_score += title_similarity(result["original_title"], self.df["title"]) * 2
+                if "release_date" in result.keys():
+                    if result["release_date"] and int(result["release_date"][:4]) == year:
+                        correct_score += 1
+                    elif result["release_date"]:
+                        correct_score += 1 / (abs(int(result["release_date"][:4]) - year) + 1)
+                if "genre_ids" in result.keys() and genre in translate_ids_to_genres(result["genre_ids"]): correct_score += 1
                 best_result = (result, correct_score) if correct_score > best_result[1] else best_result
+                print(correct_score)
             
             self.metadata = best_result[0]
 
@@ -148,7 +154,7 @@ class Movie:
     def __str__(self):
         return f"title: {self.title}\n" + \
                 f"genres: {self.genres}\n" + \
-                f"release: {self.release_date.day}.{self.release_date.month}.{self.release_date.year}\n" + \
+                f"release: {self.release_date}\n" + \
                 f"vote_average: {self.vote_average}\n" + \
                 f"vote_count: {self.vote_count}\n\n" + \
                 f"overview: {self.overview}"
@@ -161,7 +167,7 @@ def get_movies(movie_list, from_rarefilmm=False):
     """
     if from_rarefilmm:
         results = get_search_results([movie["title"] for movie in movie_list])
-        return [Movie(result, from_rarefilmm, df) for result, df in zip(results, movie_list)]
+        return [Movie(result, from_rarefilmm, df.squeeze()) for result, df in zip(results, movie_list)]
     results = get_search_results(movie_list)
     return [Movie(result) for result in results]
 
