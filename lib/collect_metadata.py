@@ -86,14 +86,26 @@ class Movie:
     def __init__(self, search_results, from_rarefilmm=False, df=None):
         self.df = df # in case we search from the rarefilmm df, then this is the row.
         self.select_movie(search_results, from_rarefilmm) # set self.metadata
-        self.extract_data() # get info from self.metadata.
+        if self.metadata:
+            self.extract_data() # get info from self.metadata.
+        else: # sometimes simply nothing is found.
+            self.title = None
+            self.genres = None
+            self.overview = None
+            self.release_date = None
+            self.poster = None
+            self.vote_average = None
+            self.vote_count = None
         
     def extract_data(self):
         """
         We gather and save all the information about the movie into the Movie object.
         All of this is also stored in self.metadata, but pre-formatted.
         """
-        self.genres = {genre_id: genre["name"] for genre_id in self.metadata["genre_ids"] for genre in tmdb_genres if genre["id"] == genre_id}
+        if self.metadata["genre_ids"]:
+            self.genres = {genre_id: genre["name"] for genre_id in self.metadata["genre_ids"] for genre in tmdb_genres if genre["id"] == genre_id}
+        else:
+            self.genres = None
         self.title = self.metadata["original_title"]
         self.overview = self.metadata["overview"]
         if self.metadata["release_date"]:
