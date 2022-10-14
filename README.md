@@ -2,31 +2,20 @@
 
 [Here](http://rarefilmm.com/) is the website we're using. A directory of old and rare films. Note that this site *does* host some torrents to the films, but as long as we're only taking advantage of the movie information, there shouldn't be any ethical problems in our way.
 
-Note: Use finalised_data2.csv instead. It's got improved country names. A *few* movies still have the country 'HD', but we can fix those manually.
+Note: Use /data/cleaned_titles_data.csv. The rest are deprecated.
 
-## The code
-We use beautifulsoup4 and pandas mostly. Code's included in the repo. Some movies had 'Arthouse' as the first tag. In those cases, I opted to choose the second tag, which usually ended up being more descriptive, such as 'Drama'.
-
-Occasionally, however, the only tag was 'Arthouse', so it'll occur in the dataset somewhat.
+## Scraping
+We use beautifulsoup4 and pandas mostly. Code's included in the repo. Some movies had 'Arthouse' as the first tag. In those cases, we opted to choose the second tag, which usually ended up being more descriptive, such as 'Drama'. Occasionally, however, the only tag was 'Arthouse', so it appears in the dataset occasionally.
 
 The data is in the form of a csv file with columns "title", "year", "genre", "country". You can import it into pandas with
 
-```
+```python
 import pandas as pd
-pd.read_csv(filename)
-pd.head()
+df = pd.read_csv(path/to/cleaned_titles_data.csv)
 ```
 
-(If not installed, just use `pip install pandas` in the terminal or command line.)
-
-The head() command just shows the first 5 or so rows.
-
-## Some ideas
-One idea for data analysis we discussed was getting the distribution of genres over years and comparing to more popular movies from those eras.
-
-There are also some 'nan' values every now and then, but that just means we'll have more to write about for the report- the process of scraping, the process of cleaning the data, wrangling and whatnot buzzwords we have.
-
-We can also consider other (?) correlations between the datapoints. Years and countries of origin? Even directors? (that code doesn't really work yet)
+## TMDB API
+See /lib/ for current work on the backend using the API and instructions on collecting movie data.
 
 ## Statistical biases
 
