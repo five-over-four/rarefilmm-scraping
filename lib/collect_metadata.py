@@ -10,14 +10,18 @@ from difflib import SequenceMatcher
 # if incorrect, change this on import: cm.df = pd.read_csv(cleaned_titles_data_filepath)
 df = pd.read_csv("../data/cleaned_titles_data.csv")
 
+# set this when importing.
+# cm.API_KEY = api_string
+API_KEY = None
+
 # # Functions to fetch movie data
 
-def search_and_parse(request, api_key="08bfcffdd73f2bfad0410dc1914be2c6"):
+def search_and_parse(request):
     """
     Give search term like "the godfather", returns python list of dictionaries,
     each dictionary its own movie entry.
     """
-    result = requests.get(f"https://api.themoviedb.org/3/search/movie?api_key={api_key}&query={request}")
+    result = requests.get(f"https://api.themoviedb.org/3/search/movie?api_key={API_KEY}&query={request}")
     text = result.text.replace("false", "False").replace("true", "True").replace("null", "None")
     return eval(text)
 
@@ -46,11 +50,11 @@ def get_search_results(movie_list):
 
 # # Metadata extraction
 
-def get_genre_list(api_key="08bfcffdd73f2bfad0410dc1914be2c6"):
+def get_genre_list():
     """
     returns [{"id": 28, "name": "Action"}, ..., {"id": 37, "name": "Western"}]
     """
-    req_string = f"https://api.themoviedb.org/3/genre/movie/list?api_key={api_key}&language=en-US"
+    req_string = f"https://api.themoviedb.org/3/genre/movie/list?api_key={API_KEY}&language=en-US"
     result = requests.get(req_string)
     text = result.text.replace("false", "False").replace("true", "True").replace("null", "None")
     return eval(text)["genres"]
