@@ -7,8 +7,8 @@ import pandas as pd
 from difflib import SequenceMatcher
 
 # from lib import collect_metadata as cm
-# if incorrect, change this on import: cm.df = pd.read_csv(cleaned_titles_data_filepath)
-df = pd.read_csv("../data/cleaned_titles_data.csv")
+# set to cm.df = pd.read_csv(cleaned_titles_data_filepath)
+df = None
 
 # set this when importing.
 # cm.API_KEY = api_string
