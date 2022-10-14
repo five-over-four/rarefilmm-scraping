@@ -6,8 +6,8 @@ from datetime import datetime
 import pandas as pd
 from difflib import SequenceMatcher
 
-# change this on import: collect_metadata.df = pd.read_csv(filepath)
-df = pd.read_csv("./scraping/cleaned_titles_data.csv")
+# if incorrect, change this on import: collect_metadata.df = pd.read_csv(filepath)
+df = pd.read_csv("../data/cleaned_titles_data.csv")
 
 # # Functions to fetch movie data
 
