@@ -44,3 +44,8 @@ movie_search = [df.loc[df["title"] == title] for title in titles]
 movies = get_movies(movie_search, from_rarefilmm=True)
 ```
 The reason we use the dataframe instead of search terms is because these films are harder to find and often have difficult titles- using a dataframe row, we have *more information* to compare to the search results: the title, year, genre, and country.
+
+Any dataframe row from `cleaned_titles_data.csv` will work, eg. you can call 
+```python
+get_movies([df.iloc[100]], from_rarefilmm=True)
+```
