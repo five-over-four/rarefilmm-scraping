@@ -6,7 +6,7 @@ Import these using `from lib import filename`
 
 **Convention:** `from lib import collect_metadata as cm`.
 
-When importing, remember to set `cm.df = pd.read_csv(file_path_to_rarefilmm_csv)`. This dataframe is used whenever searching *using the dataframe* directly.
+When importing, remember to set `cm.df = pd.read_csv(file_path_to_rarefilmm_csv)`. This dataframe is used whenever searching *using the dataframe* directly. Remember to also set `cm.API_KEY` to the correct string.
 
 This file contains methods to search movie data from TMDB using the API. There are two ways to do this, both with the function `cm.get_movies()`:
 
@@ -17,6 +17,7 @@ Example: If your search terms are "godfather", "avengers endgame", "taxi driver"
 ```python
 from lib import collect_metadata as cm
 
+cm.API_KEY = api_string
 movie_search = ["godfather", "avengers endgame", "taxi driver", "dances with wolves"]
 movies = cm.get_movies(movie_search)
 ```
@@ -38,6 +39,7 @@ Example: you want to find the films "La guerre est finie", "You Light Up My Life
 from lib import collect_metadata as cm
 import pandas as pd
 
+cm.API_KEY = api_string
 df = pd.read_csv(path_to_rarefilmm_csv)
 titles = ["La guerre est finie", "You Light Up My Life", "Die große Liebe"]
 movie_search = [df.loc[df["title"] == title] for title in titles]
