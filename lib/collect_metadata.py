@@ -140,7 +140,7 @@ def get_movies(movie_list, from_rarefilmm=False):
     """
     If NOT from_rarefilmm, movie_list is a list of search terms.
     if IS from_rarefilmm, movie_list is a list of dataframe rows, each its own
-    movie entry. for instance, rf_df.loc[rf_df["title"] == "Utz"].
+    movie entry. for instance, df.loc[df["title"] == "Utz"].
     """
     if from_rarefilmm:
         results = get_search_results([movie["title"] for movie in movie_list])
