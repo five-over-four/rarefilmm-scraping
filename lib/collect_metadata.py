@@ -150,7 +150,7 @@ class Movie:
             self.poster = "https://image.tmdb.org/t/p/original" + self.metadata["poster_path"]
         else:
             if self.from_rarefilmm: # if we can't find poster on TMDB for RF film, use RF poster.
-                self.poster = df["poster-path"]
+                self.poster = self.df["poster-path"]
             else:
                 self.poster = None
         self.vote_average = self.metadata["vote_average"]
@@ -198,7 +198,10 @@ def get_movies(movie_list, from_rarefilmm=False):
     """
     If NOT from_rarefilmm, movie_list is a list of search terms.
     if IS from_rarefilmm, movie_list is a list of dataframe rows, each its own
-    movie entry. for instance, df.loc[df["title"] == "Utz"].
+    movie entry. for instance, df.loc[df["title"] == "Utz"] or df.iloc[20].
+
+    Note that you cannot use df.iloc[10:20], they have to be individual rows in a list, so
+    [df.iloc[x] for x in range(10,21)] must be used.
     """
     if from_rarefilmm:
         movie_list = [movie.squeeze() for movie in movie_list] # this fixes issues with .loc and .iloc returning different structures.
