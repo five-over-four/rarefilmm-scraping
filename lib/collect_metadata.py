@@ -86,16 +86,22 @@ class Movie:
     def __init__(self, search_results, from_rarefilmm=False, df=None):
         self.df = df # in case we search from the rarefilmm df, then this is the row.
         self.select_movie(search_results, from_rarefilmm) # set self.metadata
+
         if self.metadata:
-            self.extract_data() # get info from self.metadata.
-        else: # sometimes simply nothing is found.
-            self.title = None
-            self.genres = None
+            self.extract_data()
+
+        # this happens when the search results on TMDB are empty.
+        else:
             self.overview = None
-            self.release_date = None
             self.poster = None
             self.vote_average = None
             self.vote_count = None
+            if from_rarefilmm: # but we should still set the data by the dataframe.
+                self.title = df.title
+                if df.genre == "Sci-Fi": # this exception causes problems.
+                    self.genres = {878: "Science Fiction"}
+                self.genres = {genre["id"]: genre["name"] for genre in tmdb_genres if genre["name"] == df.genre}
+                self.release_date = df.year
         
     def extract_data(self):
         """
@@ -144,7 +150,6 @@ class Movie:
                         correct_score += 1 / (abs(int(result["release_date"][:4]) - year) + 1)
                 if "genre_ids" in result.keys() and genre in translate_ids_to_genres(result["genre_ids"]): correct_score += 1
                 best_result = (result, correct_score) if correct_score > best_result[1] else best_result
-                print(correct_score)
             
             self.metadata = best_result[0]
 
