@@ -201,6 +201,7 @@ def get_movies(movie_list, from_rarefilmm=False):
     movie entry. for instance, df.loc[df["title"] == "Utz"].
     """
     if from_rarefilmm:
+        movie_list = [movie.squeeze() for movie in movie_list] # this fixes issues with .loc and .iloc returning different structures.
         results = get_search_results([movie["title"] for movie in movie_list], genres = [movie["genre"] for movie in movie_list])
         return [Movie(result, from_rarefilmm, df.squeeze()) for result, df in zip(results, movie_list)]
     results = get_search_results(movie_list)
