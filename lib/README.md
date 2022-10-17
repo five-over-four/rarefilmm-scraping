@@ -29,6 +29,7 @@ movie.overview          - text description of the film.
 movie.poster            - IF this exists, url to the poster. otherwise None.
 movie.vote_average      - 0 to 10 score on tmdb.
 movie.vote_count        - how many votes.
+movie.poster            - the url to the poster.
 ```
 You can *print* the movie object to see all of these represented cleanly.
 
@@ -47,7 +48,7 @@ movies = get_movies(movie_search, from_rarefilmm=True)
 ```
 The reason we use the dataframe instead of search terms is because these films are harder to find and often have difficult titles- using a dataframe row, we have *more information* to compare to the search results: the title, year, genre, and country.
 
-Any dataframe row from `cleaned_titles_data.csv` will work, eg. you can call 
+Any dataframe row from `rf_data.csv` will work, eg. you can call 
 ```python
 get_movies([df.iloc[100]], from_rarefilmm=True)
 ```
