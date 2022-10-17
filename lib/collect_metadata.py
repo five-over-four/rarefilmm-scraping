@@ -92,16 +92,21 @@ class Movie:
 
         # this happens when the search results on TMDB are empty.
         else:
-            self.overview = None
+            self.title = None
+            self.genres = None
+            self.release_date = None
             self.poster = None
+            self.overview = None
             self.vote_average = None
             self.vote_count = None
             if from_rarefilmm: # but we should still set the data by the dataframe.
-                self.title = df.title
-                if df.genre == "Sci-Fi": # this exception causes problems.
+                self.title = df["title"]
+                if df["genre"] == "Sci-Fi": # this exception causes problems.
                     self.genres = {878: "Science Fiction"}
-                self.genres = {genre["id"]: genre["name"] for genre in tmdb_genres if genre["name"] == df.genre}
-                self.release_date = df.year
+                else:
+                    self.genres = {genre["id"]: genre["name"] for genre in tmdb_genres if genre["name"] == df["genre"]}
+                self.release_date = df["year"]
+                self.poster = df["poster-path"]
         
     def extract_data(self):
         """
