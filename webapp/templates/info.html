@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}
+Rarefilmm Recommender
+{% endblock %}
+{% block content %}
+<link rel="stylesheet" type = text/css href = "{{ url_for('static', filename='style.css') }}">
+<style type=text/css>
+    body {
+        background-image: url({{ random_background}})
+    }
+    </style>
+<div class="content">
+
+    <div class="title-box">
+        <div class="title-fancy">Project Information
+            <a href="https://rarefilmm.com">
+                <img src ="http://rarefilmm.com/wp-content/uploads/2017/07/rrflogo.png" width=200px>
+            </a>
+        </div>
+    </div>
+
+    <div class="inner-content">
+
+    <h2>The idea</h2>
+    <p>This project began by scraping the <a href="https://rarefilmm.com">Rarefilmm.com</a> website for movie information
+        using the <a href="https://pypi.org/project/beautifulsoup4/">Beautiful Soup</a> library for python. Initially, we were 
+        going for some idea about the genre distributions of the films on the site in comparison to more objective sources, such as 
+        <a href="https://www.imdb.com/">imdb</a>, but eventually landed on the idea of a movie recommendation system.
+        <br><br>
+        We would take user input- a list of movies the user enjoyed, and recommend movies from our more niché database based on those.
+        This web application was a last-minute idea, as it seemed interesting to practice some HTML, CSS, and Python's <a href="https://flask.palletsprojects.com/en/2.2.x/">Flask library</a>.
+    </p>
+    <h2>Data collection</h2>
+    <p>
+        As it turned out, to make a reasonable movie recommendation system, we needed much more than just the titles, release years, and genres that
+        our scraped data contained. We found the <a href="https://www.themoviedb.org/documentation/api">TMDB API</a> and got to work, using the API to collect
+        the missing data for the movies, mostly by using the script 'collect_metadata.py' found in the project's files, filling in information such as
+        the rating, poster-urls, overviews of the films.
+        <br><br>
+        The data took a lot of work to collect properly due to lots of inconsistencies in TMDB's output, getting the Rarefilmm data to conform with the TMDB
+        entries and so forth. Most of the collection and cleaning was done in Jupyter Notebooks later into the project.
+    </p>
+    <h2>The Recommendation system</h2>
+    <p>
+        TODO.
+
+    </p>
+</div>
+</div>
+{% endblock %}
+{% block more %}
+{% endblock %}
