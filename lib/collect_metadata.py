@@ -4,6 +4,7 @@
 import requests
 from datetime import datetime
 import pandas as pd
+import numpy as np
 from difflib import SequenceMatcher
 
 # from lib import collect_metadata as cm
@@ -126,6 +127,7 @@ class Movie:
                     self.genres = {genre["id"]: genre["name"] for genre in tmdb_genres if genre["name"] == df["genre"]}
                 self.release_date = df["year"]
                 self.poster = df["poster-path"]
+                self.overview = df["description"]
         
     def extract_data(self):
         """
@@ -150,7 +152,10 @@ class Movie:
             self.poster = "https://image.tmdb.org/t/p/original" + self.metadata["poster_path"]
         else:
             if self.from_rarefilmm: # if we can't find poster on TMDB for RF film, use RF poster.
-                self.poster = self.df["poster-path"]
+                if np.isnan(self.df["tmdb-poster"]):
+                    self.poster = self.df["poster-path"]
+                else:
+                    self.poster = self.df["tmdb-poster"]
             else:
                 self.poster = None
         self.vote_average = self.metadata["vote_average"]
@@ -192,7 +197,8 @@ class Movie:
                 f"release: {self.release_date}\n" + \
                 f"vote_average: {self.vote_average}\n" + \
                 f"vote_count: {self.vote_count}\n\n" + \
-                f"overview: {self.overview}"
+                f"overview: {self.overview}\n\n" + \
+                f"poster: {self.poster}"
     
 def get_movies(movie_list, from_rarefilmm=False):
     """
