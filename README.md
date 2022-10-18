@@ -5,8 +5,10 @@
 The goal is to build a film recommender that takes a list of movies from the user that we'll search for using the TMDB API, and then recommend films from  the Rarefilmm-database, thus exposing the viewer to potentially interesting movies they might've not seen otherwise.
 
 ## Project Hierarchy
+### /webapp
+The actual tool. Contains the data as described below, as well as /lib/collect_metadata.py, as it is needed for some of the functions within the application.
 ### /data
-Contains the scraped data. The main file is `rf_data.csv`, which contains all the relevant information. Some others are left behind as backup.
+Contains the scraped data. The main file is `rf_data.csv`, which contains all the relevant information about the movies on Rarefilmm.
 ### /lib
 Contains at the moment `collect_metadata.py`, which deals with interfacing with the TMDB API and *collating* information from both Rarefilmm and TMDB. May be integrated into a Flask web application, at which point this directory becomes deprecated.
 ### /scrape_scripts
