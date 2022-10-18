@@ -1,6 +1,8 @@
-# Rarefilmm scraping
+# Rarefilmm Recommender
 
 [Here](http://rarefilmm.com/) is the website we're using. A directory of old and 'rare/lost' films. Note that this site *does* host some torrents to the films, but as long as we're only taking advantage of the movie information, there shouldn't be any ethical problems in our way.
+
+The goal is to build a film recommender that takes a list of movies from the user that we'll search for using the TMDB API, and then recommend films from  the Rarefilmm-database, thus exposing the viewer to potentially interesting movies they might've not seen otherwise.
 
 ## Project Hierarchy
 ### /data
