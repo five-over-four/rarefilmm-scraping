@@ -189,7 +189,10 @@ class Movie:
             self.metadata = best_result[0]
 
         else:
-            self.metadata = search_results[0]
+            if not search_results:
+                self.metadata = None
+            else:
+                self.metadata = search_results[0]
         
     def __str__(self):
         return f"title: {self.title}\n" + \
