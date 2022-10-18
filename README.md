@@ -31,5 +31,5 @@ See /lib/ for current work on the backend using the API and instructions on coll
 - The site isn't guaranteed to have randomly sampled 'rare' movies. They can have a bias toward certain time periods or countries or styles, such as german expressionism. We'll therefore have to preface that our findings are in the context of this database.
 
 ## Occurrence of each genre by decade on RF (black) vs. TMDB (red)
-![]([https://i.imgur.com/mdP0nGQ.jpg](https://i.imgur.com/5dUpIYH.png))
+![](https://i.imgur.com/5dUpIYH.png)
 Here, we have at each decade (#genre films / #films) to see the distribution of each genre. For instance, Westerns peak just around 1950s, as they should. Just a fun little visualisation.
