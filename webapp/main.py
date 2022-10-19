@@ -1,7 +1,6 @@
 from flask import Flask, redirect, url_for, render_template, request
 from templates import collect_metadata as cm
 import pandas as pd
-from random import randint
 import webbrowser
       
 cm.API_KEY = "08bfcffdd73f2bfad0410dc1914be2c6"
