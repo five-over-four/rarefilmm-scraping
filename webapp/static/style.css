@@ -1,0 +1,89 @@
+body {
+	background-color: rgb(102, 0, 0);
+	color: white;
+	font-family: monospace;
+}
+
+.title-fancy {
+	font-size: 40pt;
+	font-weight: bolder;
+	text-align: center;
+	animation-name: animate-text;
+	animation-iteration-count: infinite;
+	animation-duration: 3s;
+	animation-delay: 0s;
+	animation-timing-function: ease-in-out;
+}
+
+.title-box {
+	padding: none;
+	align: center;
+	border: 5px solid white;
+	border-top-style: none;
+	border-right-style: none;
+	border-left-style: none;
+	background-color: rgba(0,0,0,0.2);
+}
+
+.content {
+	padding: 2em;
+	background-color: rgba(0, 0, 0, 0.8);
+	color: white;
+	font-family: monospace;
+	font-style: bold;
+	max-width: 900px;
+	margin: auto;
+	margin-top: 2em;
+	margin-bottom: 2em;
+	height: auto;
+	border: 5px solid white;
+	backdrop-filter: blur(8px);
+}
+
+.inner-content {
+	padding: 1em;
+}
+
+.movie {
+	height: auto;
+	width: 100%;
+	overflow: hidden;
+}
+
+.poster-description-parent {
+	width: 100%;
+	display: grid;
+	grid-template-columns: 30% 70% auto;
+	grid-gap: 1em;
+	height: auto;
+}
+
+.poster {
+    object-fit: contain;
+}
+
+.description {
+	padding-right: 1em;
+}
+
+img {
+	width: 100%;
+	object-fit: contain;
+}
+
+p {
+	padding-bottom: 1em;
+	margin-left: 2em;
+}
+
+.lower-segment {
+	margin-top: 2em;
+}
+
+@keyframes animate-text {
+	0% {}
+	50% {
+		filter: blur(1px);
+	}
+	100% {}
+}
