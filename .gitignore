@@ -1,2 +1,4 @@
 .env
 /data/tmdb_dataset
+venv
+
