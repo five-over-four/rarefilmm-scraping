@@ -89,9 +89,12 @@ input {
 
 .details {
 	padding-right: 2em;
+	padding-bottom: 2em;
+	display: table;
 }
 
 .genres {
+	display: table-footer-group;
 	font-size: 15pt;
 }
 
