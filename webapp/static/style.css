@@ -1,5 +1,4 @@
 body {
-	background-color: rgb(102, 0, 0);
 	color: white;
 	font-family: monospace;
 }
@@ -22,7 +21,7 @@ body {
 	border-top-style: none;
 	border-right-style: none;
 	border-left-style: none;
-	background-color: rgba(0,0,0,0.2);
+	background-color: rgba(0,0,0,0);
 }
 
 .link-section {
@@ -32,7 +31,6 @@ body {
 	padding: 1em;
 	background-color: rgba(0, 0, 0, 0.8);
 	color: white;
-	font-family: monospace;
 	font-style: bold;
 	max-width: 900px;
 	margin: auto;
@@ -47,7 +45,6 @@ body {
 	padding: 2em;
 	background-color: rgba(0, 0, 0, 0.8);
 	color: white;
-	font-family: monospace;
 	font-style: bold;
 	max-width: 900px;
 	margin: auto;
