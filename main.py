@@ -42,9 +42,8 @@ def give_front_page():
     return {"poster": "http://rarefilmm.com/wp-content/uploads/2017/07/rrflogo.png",
             "year": "",
             "title": "Welcome!",
-            "overview": "Enter a list of movies below to get a recommendation from the <a href='https://rarefilmm.com'>Rarefilmm</a> database! \
-                        Separate your entries by commas. <br><br>Example: 'Taxi Driver, Synecodche new york, \
-                        i'm thinking of ending things, It's such a beautiful day', without the single quotes."}
+            "overview": "Search for a movie below to get recommendations from the <a href='https://rarefilmm.com'>Rarefilmm</a> database! \
+                        The recommendations will be based on various properties of the user's movie, such as description, genre(s), ratings..."}
 
 def give_error_page():
     """
@@ -55,7 +54,7 @@ def give_error_page():
     """
     return {"poster": "http://rarefilmm.com/wp-content/uploads/2017/07/rrflogo.png",
             "year": "",
-            "title": "No movies found!",
+            "title": "Nothing found in the search!",
             "overview": "Your search yielded no results from the TMDB database; try a different query."}
 
 @app.route("/home", methods=["GET", "POST"])
@@ -68,18 +67,17 @@ def home():
 
     background_poster = generate_background()
 
-    # this currently just displays the first search result from tmdb with the given search terms.
-    # useful for testing, but will change in the final product.
+    # gets just one search result now. selects error page if not found,
+    # otherwise shows the search result. will later update to showing
+    # RECOMMENDATIONS (multiple).
     if request.method == "POST":
         search = request.form.get("movies")
-        search_terms = search.split(",")
-        movies = cm.get_movies(search_terms, False)
-        if all([movie.title == None for movie in movies]):
+        movie = cm.get_movies(search, False)[0]
+        if not movie.title:
             movie_data = give_error_page()
 
         # TODO some kinda thing.
         else:
-            movie = movies[0]
             movie_data = {"year": f"({format_date(movie.release_date)})", "title": movie.title, "poster": movie.poster, "overview": movie.overview}
 
     return render_template("home.html", movie=movie_data, random_background=background_poster)
