@@ -1,8 +1,23 @@
-html { font-size: 12pt; }
-
 body {
+	margin: 0;
+	font-size: 12pt;
 	color: white;
 	font-family: monospace;
+}
+
+.link-section {
+	display: flex;
+	justify-content: space-between;
+	font-size: 20pt;
+	padding: 1em;
+	padding-left: 15%;
+	padding-right: 15%;
+	background-color: rgba(0,0,0,0.8);
+	color: white;
+	font-style: bold;
+	margin: 0;
+	height: auto;
+	backdrop-filter: blur(8px);
 }
 
 .title-fancy {
@@ -16,6 +31,14 @@ body {
 	animation-timing-function: ease-in-out;
 }
 
+.title-box {
+	align: center;
+	border: 5px solid white;
+	border-top-style: none;
+	border-right-style: none;
+	border-left-style: none;
+}
+
 input {
 	width: 100%;
 	padding: 0.5em;
@@ -26,37 +49,10 @@ input {
 	border-radius: 4px;
 }
 
-.title-box {
-	padding: none;
-	align: center;
-	border: 5px solid white;
-	border-top-style: none;
-	border-right-style: none;
-	border-left-style: none;
-}
-
-.link-section {
-	display: flex;
-	justify-content: space-between;
-	font-size: 20pt;
-	padding: 1em;
-	background-color: rgba(0, 0, 0, 0.8);
-	color: white;
-	font-style: bold;
-	max-width: 900px;
-	margin: auto;
-	margin-top: 1em;
-	height: auto;
-	border: 5px solid white;
-	border-radius: 3px;
-	backdrop-filter: blur(8px);
-}
-
 .content {
 	padding: 2em;
 	background-color: rgba(0, 0, 0, 0.8);
 	color: white;
-	font-style: bold;
 	max-width: 900px;
 	margin: auto;
 	margin-top: 2em;
@@ -69,20 +65,21 @@ input {
 
 .inner-content {
 	font-size: 12pt;
-	padding: 1em;
+	margin: 1em;
 }
 
 .movie {
 	height: auto;
 	width: 100%;
 	overflow: hidden;
+	padding-bottom: 2em;
 }
 
-.poster-description-parent {
+.poster-details-parent {
 	width: 100%;
 	display: grid;
 	grid-template-columns: 30% 70% auto;
-	grid-gap: 1em;
+	grid-gap: 2em;
 	height: auto;
 }
 
@@ -90,8 +87,12 @@ input {
     object-fit: contain;
 }
 
-.description {
-	padding-right: 1em;
+.details {
+	padding-right: 2em;
+}
+
+.genres {
+	font-size: 15pt;
 }
 
 img {
@@ -102,6 +103,11 @@ img {
 p {
 	padding-bottom: 1em;
 	margin-left: 2em;
+}
+
+h1 {
+	margin: 0;
+	margin-bottom: 7pt;
 }
 
 a:visited, a:active, a:link {
