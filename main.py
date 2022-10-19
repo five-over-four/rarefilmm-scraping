@@ -63,14 +63,19 @@ def home():
     """
     on localhost:5000/home or just localhost:5000.
     """
-    global movie_data
 
     background_poster = generate_background()
+
+    # after a single search, it's always POST, since we keep resubmitting the request on each
+    # refresh. so only on the first open, you get the instruction page. this MIGHT have to be
+    # rewritten into a redirect scheme later.
+    if request.method == "GET":
+        movie_data = give_front_page()
 
     # gets just one search result now. selects error page if not found,
     # otherwise shows the search result. will later update to showing
     # RECOMMENDATIONS (multiple).
-    if request.method == "POST":
+    elif request.method == "POST":
         search = request.form.get("movies")
         movie = cm.get_movies(search, False)[0]
         if not movie.title:
@@ -95,6 +100,7 @@ if __name__ == "__main__":
     queue web browser,
     run flask app.
     """
-    movie_data = give_front_page()
-    webbrowser.open_new_tab("http://127.0.0.1:5000")
+    # uncomment if you want the browser to open here automatically.
+    # NOT COMPATIBLE WITH HEROKU.
+    # webbrowser.open_new_tab("http://127.0.0.1:5000")
     app.run(debug=False, port=5000)
