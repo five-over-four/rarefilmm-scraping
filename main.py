@@ -1,5 +1,6 @@
 from flask import Flask, redirect, url_for, render_template, request
 from templates import collect_metadata as cm
+from templates import generate_html as genhtml
 import pandas as pd
 from random import randint
 import webbrowser
@@ -13,6 +14,7 @@ def select_poster(df):
     """
     This just chooses either the RF or TMDB poster,
     priority for TMDB, if it exists.
+    2496 / 2771 have a tmdb poster.
     """
     if len(str(df["tmdb-poster"])) == 3:
         return df["poster-path"]
@@ -39,11 +41,11 @@ def give_front_page():
     """
     This is the default information on the /home page when first starting the application.
     """
-    return {"poster": "http://rarefilmm.com/wp-content/uploads/2017/07/rrflogo.png",
+    return genhtml.generate_html_block({"poster": "http://rarefilmm.com/wp-content/uploads/2017/07/rrflogo.png",
             "year": "",
             "title": "Welcome!",
             "overview": "Search for a movie below to get recommendations from the <a href='https://rarefilmm.com'>Rarefilmm</a> database! \
-                        The recommendations will be based on various properties of the user's movie, such as description, genre(s), ratings..."}
+                        The recommendations will be based on various properties of the user's movie, such as description, genre(s), ratings..."})
 
 def give_error_page():
     """
@@ -52,10 +54,28 @@ def give_error_page():
 
     We'll probably need *some* error page at the end, no matter what.
     """
-    return {"poster": "http://rarefilmm.com/wp-content/uploads/2017/07/rrflogo.png",
+    return genhtml.generate_html_block({"poster": "http://rarefilmm.com/wp-content/uploads/2017/07/rrflogo.png",
             "year": "",
             "title": "Nothing found in the search!",
-            "overview": "Your search yielded no results from the TMDB database; try a different query."}
+            "overview": "Your search yielded no results from the TMDB database; try a different query."})
+
+def movies_to_html_block(movies):
+    """
+    takes the results from cm.get_movies() and turns them into
+    html blocks that can be inserted into home.html, using
+    generate_html.generate_html_block().
+    """
+    html_block = ""
+    for film in movies:
+        html_block = html_block + \
+                genhtml.generate_html_block({
+                    "year": f"({format_date(film.release_date)})", 
+                    "title": film.title, 
+                    "poster": film.poster, 
+                    "overview": film.overview
+                })
+    return html_block
+
 
 @app.route("/home", methods=["GET", "POST"])
 @app.route("/", methods=["GET", "POST"])
@@ -70,22 +90,23 @@ def home():
     # refresh. so only on the first open, you get the instruction page. this MIGHT have to be
     # rewritten into a redirect scheme later.
     if request.method == "GET":
-        movie_data = give_front_page()
+        display_html = give_front_page()
 
     # gets just one search result now. selects error page if not found,
     # otherwise shows the search result. will later update to showing
     # RECOMMENDATIONS (multiple).
     elif request.method == "POST":
-        search = request.form.get("movies")
-        movie = cm.get_movies(search, False)[0]
-        if not movie.title:
-            movie_data = give_error_page()
+        search = request.form.get("movies").split(",")
+        movies = cm.get_movies(search, False)
+        print(movies[0].title)
+        if not movies[0].title:
+            display_html = give_error_page()
 
         # TODO some kinda thing.
         else:
-            movie_data = {"year": f"({format_date(movie.release_date)})", "title": movie.title, "poster": movie.poster, "overview": movie.overview}
+            display_html = movies_to_html_block(movies)
 
-    return render_template("home.html", movie=movie_data, random_background=background_poster)
+    return render_template("home.html", display_html=display_html, random_background=background_poster)
 
 @app.route("/info")
 def info():
@@ -102,5 +123,5 @@ if __name__ == "__main__":
     """
     # uncomment if you want the browser to open here automatically.
     # NOT COMPATIBLE WITH HEROKU.
-    # webbrowser.open_new_tab("http://127.0.0.1:5000")
+    #webbrowser.open_new_tab("http://127.0.0.1:5000")
     app.run(debug=False, port=5000)
