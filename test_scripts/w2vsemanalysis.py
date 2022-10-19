@@ -18,14 +18,14 @@ print(df.shape) # (2757, 9), removed 14 rows
 descriptions = df['description']
 titles = df['title']
 
-docs = [nlp(description) for description in descriptions]
+docs = [nlp(' '.join([str(t) for t in nlp(description) if t.pos_ in ['NOUN', 'PROPN']])) for description in descriptions]
 
 # labels = [title for title in titles]
  
  
-movie_name = 'the godfather'
+movie_name = 'shawshank redemption'
 movie = get_movies([movie_name])
-movie_nlp = nlp(movie[0].overview)
+movie_nlp = nlp(' '.join([str(t) for t in nlp(movie[0].overview) if t.pos_ in ['NOUN', 'PROPN']]))
 print(movie[0].overview)
 print('---')
 def create_heatmap(similarity, cmap = "YlGnBu"):
