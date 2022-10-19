@@ -2,19 +2,22 @@
 
 [Here](http://rarefilmm.com/) is the website we're using. A directory of old and 'rare/lost' films. Note that this site *does* host some torrents to the films, but as long as we're only taking advantage of the movie information, there shouldn't be any ethical problems in our way.
 
-The goal is to build a film recommender that takes a list of movies from the user that we'll search for using the TMDB API, and then recommend films from  the Rarefilmm-database, thus exposing the viewer to potentially interesting movies they might've not seen otherwise.
+The goal is to build a film recommender that takes a movie from the user that we'll search for using the TMDB API, and then recommend films from  the Rarefilmm-database, thus exposing the viewer to potentially interesting movies they might've not seen otherwise.
 
 ## Project Hierarchy
-### /webapp
-The actual tool. Contains the data as described below, as well as /lib/collect_metadata.py, as it is needed for some of the functions within the application.
+The project is currently in the form of a Flask application that we're going to try to host on Heroku. The current layout is:
 ### /data
-Contains the scraped data. The main file is `rf_data.csv`, which contains all the relevant information about the movies on Rarefilmm.
-### /lib
-Contains at the moment `collect_metadata.py`, which deals with interfacing with the TMDB API and *collating* information from both Rarefilmm and TMDB. May be integrated into a Flask web application, at which point this directory becomes deprecated.
-### /scrape_scripts
-Contains some of the scripts used to originally gather the data. Much of the collection was done in Jupyter Notebooks, so the code itself isn't stored.
-### /test_scripts
-Generally miscellaneous scripts from early in the project.
+Contains all of the Rarefilmm data required for our cosine-similarity algorithm, mostly in `rf_data.csv`: title, genre, year, description, poster-urls, urls for page, a one-hot encoding for genres... All kinds of stuff.
+
+### Scrape scripts
+These were used at the *very* beginning of the project to gather the initial data that we begun our work with. Not very useful anymore, but formed the foundation of the database.
+
+### /templates/collect_metadata.py
+This is used to interface with the TMDB API and the rarefilmm database simulataneously to gather search results. Imported into the `main.py` flask application via `from templates import collect_metadata as cm`
+
+### main.py
+Main application. Once the cosine-similarity algorithm is finished, it can be integrated into here and work can begin on CSS-design. It needs to be so that each recommended film is displayed nicely.
+
 
 ## Scraping
 We use beautifulsoup4 and pandas mostly. Code's included in the repo. Some movies had 'Arthouse' as the first tag. In those cases, we opted to choose the second tag, which usually ended up being more descriptive, such as 'Drama'. Occasionally, however, the only tag was 'Arthouse', so it appears in the dataset occasionally.
