@@ -25,6 +25,24 @@ body {
 	background-color: rgba(0,0,0,0.2);
 }
 
+.link-section {
+	display: flex;
+	justify-content: space-between;
+	font-size: 20pt;
+	padding: 1em;
+	background-color: rgba(0, 0, 0, 0.8);
+	color: white;
+	font-family: monospace;
+	font-style: bold;
+	max-width: 900px;
+	margin: auto;
+	margin-top: 1em;
+	height: auto;
+	border: 5px solid white;
+	border-radius: 3px;
+	backdrop-filter: blur(8px);
+}
+
 .content {
 	padding: 2em;
 	background-color: rgba(0, 0, 0, 0.8);
@@ -37,10 +55,12 @@ body {
 	margin-bottom: 2em;
 	height: auto;
 	border: 5px solid white;
+	border-radius: 3px;
 	backdrop-filter: blur(8px);
 }
 
 .inner-content {
+	font-size: 12pt;
 	padding: 1em;
 }
 
@@ -74,6 +94,11 @@ img {
 p {
 	padding-bottom: 1em;
 	margin-left: 2em;
+}
+
+a:visited, a:active, a:link {
+	text-decoration: none;
+	color: #AAAAAA;
 }
 
 .lower-segment {
