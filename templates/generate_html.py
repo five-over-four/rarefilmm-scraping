@@ -1,8 +1,4 @@
-# This file generates the html blocks for displaying multiple movies in a row fashion.
-
-# set this from within ../main.py to the list of rf_data.csv rows.
-# that are being recommended.
-MOVIES = None
+# This file generates the html blocks for displaying multiple movies in a row by row manner.
 
 def generate_html_block(movie):
     """
