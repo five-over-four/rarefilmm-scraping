@@ -6,7 +6,7 @@ Rarefilmm Recommender
 <link rel="stylesheet" type = text/css href = "{{ url_for('static', filename='style.css') }}">
 <style type=text/css>
 body {
-    background-image: url({{ random_background}})
+    background-image: url({{ random_background }})
 }
 </style>
 <div class="content">
@@ -16,35 +16,20 @@ body {
 
 <div class="inner-content">
 
-    <div class="movie">
-
-        <h1>{{ movie["title"] }} {{ movie["year"] }}</h1>
-        
-        <div class="poster-description-parent">
-
-            <div class="poster"><img src ="{{ movie['poster'] }}"></div>
-
-            <div class="description">
-            {% autoescape false %}
-            {{ movie["overview"] }}
-            {% endautoescape %}
-            </div>
-
-        </div>
-
-    </div>
+    {% autoescape false %}
+    {{ display_html }}
+    {% endautoescape %}
 
     <div class="lower-segment">
         <form method = "POST">
-            <h3>Get a recommendation!</h3>
             <div class="search-bar">
-                <label for="movies">Enter a movie:</label>
+                <label for="movies">Get a recommendation!</label>
                 <input 
                     type="movies" 
                     class="form-control" 
                     id="movies" 
                     name="movies" 
-                    placeholder="Get recommendations based on a movie.">
+                    placeholder="Enter a movie you'd like to get recommendations based on.">
             </div>
         </form>
     </div>
