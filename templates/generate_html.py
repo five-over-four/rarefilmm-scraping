@@ -27,7 +27,9 @@ def generate_html_block(movie):
                 {movie["overview"]}
 
                 <br><br>
-                    Genres: {movie["genre"]}
+                    <div class='genres'>
+                        Genres: {movie["genre"]}
+                    </div>
                 </div>
 
             </div>
