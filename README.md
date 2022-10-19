@@ -9,8 +9,11 @@ The project is currently in the form of a Flask application that we're going to 
 ### /data
 Contains all of the Rarefilmm data required for our cosine-similarity algorithm, mostly in `rf_data.csv`: title, genre, year, description, poster-urls, urls for page, a one-hot encoding for genres... All kinds of stuff.
 
-### Scrape scripts
+### /scrape-scripts
 These were used at the *very* beginning of the project to gather the initial data that we begun our work with. Not very useful anymore, but formed the foundation of the database.
+
+### /test_scripts
+Useful scripts for doing processing tasks/cleaning data etc.
 
 ### /templates/collect_metadata.py
 This is used to interface with the TMDB API and the rarefilmm database simulataneously to gather search results. Imported into the `main.py` flask application via `from templates import collect_metadata as cm`
