@@ -2,10 +2,7 @@ from flask import Flask, redirect, url_for, render_template, request
 from templates import collect_metadata as cm
 import pandas as pd
 from random import randint
-
-# needed to easily start the server and run browser.
 import webbrowser
-from threading import Timer
       
 cm.API_KEY = "08bfcffdd73f2bfad0410dc1914be2c6"
 cm.df = pd.read_csv("./data/rf_data.csv")
@@ -101,6 +98,5 @@ if __name__ == "__main__":
     run flask app.
     """
     movie_data = give_front_page()
-    Timer(1, webbrowser.open_new_tab("http://127.0.0.1:5000")).start()
-    # app.run() use this in the final product.
+    webbrowser.open_new_tab("http://127.0.0.1:5000")
     app.run(debug=False, port=5000)
