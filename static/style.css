@@ -122,6 +122,11 @@ a:visited, a:active, a:link {
 	margin-top: 2em;
 }
 
+select {
+	margin-left: 1pt;
+	padding: 2pt;
+}
+
 @keyframes animate-text {
 	0% {}
 	50% {
