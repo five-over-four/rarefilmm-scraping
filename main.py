@@ -111,9 +111,10 @@ def home():
     # otherwise shows the search result. will later update to showing
     # RECOMMENDATIONS (multiple).
     elif request.method == "POST":
+        how_many_recommendations = int(request.form.get("number").strip())
         search = request.form.get("movies")
         search_result = cm.get_movies([search])[0]
-        movies = [cm.df.iloc[randint(0,cm.df.shape[0]-1)] for x in range(5)] # totally just at random for now.
+        movies = [cm.df.iloc[randint(0,cm.df.shape[0]-1)] for x in range(how_many_recommendations)] # totally just at random for now.
         if not search_result.title: # nothing turned up.
             display_html = give_error_page()
             search_report = ""
@@ -122,7 +123,7 @@ def home():
             display_html = movies_to_html_block(movies)
             search_report = f"Recommendations based on '{search}':"
 
-    return render_template("home.html", display_html=display_html, random_background=background_poster, search_report=search_report)
+    return render_template("home.html", display_html=display_html, random_background=background_poster, search_report=search_report, numbers=[*range(1,11)])
 
 @app.route("/info")
 def info():
