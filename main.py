@@ -111,7 +111,10 @@ def home():
     # otherwise shows the search result. will later update to showing
     # RECOMMENDATIONS (multiple).
     elif request.method == "POST":
-        how_many_recommendations = int(request.form.get("number").strip())
+        try:
+            how_many_recommendations = int(request.form.get("number").strip())
+        except:
+            how_many_recommendations = 5
         search = request.form.get("movies")
         search_result = cm.get_movies([search])[0]
         movies = [cm.df.iloc[randint(0,cm.df.shape[0]-1)] for x in range(how_many_recommendations)] # totally just at random for now.
@@ -141,4 +144,4 @@ if __name__ == "__main__":
     # uncomment if you want the browser to open here automatically.
     # NOT COMPATIBLE WITH HEROKU.
     #webbrowser.open_new_tab("http://127.0.0.1:5000")
-    app.run(debug=True, port=5000)
+    app.run(debug=False, port=5000)
