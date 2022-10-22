@@ -86,7 +86,7 @@ def movies_to_html_block(movies):
                     "title": film["title"], 
                     "poster": select_poster(film), 
                     "overview": film["description"],
-                    "genre": select_genres(film)
+                    "genre": f'Genres: {select_genres(film)}'
                 })
     return html_block
 
@@ -141,4 +141,4 @@ if __name__ == "__main__":
     # uncomment if you want the browser to open here automatically.
     # NOT COMPATIBLE WITH HEROKU.
     #webbrowser.open_new_tab("http://127.0.0.1:5000")
-    app.run(debug=False, port=5000)
+    app.run(debug=True, port=5000)
