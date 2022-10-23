@@ -193,6 +193,19 @@ class Movie:
                 self.metadata = None
             else:
                 self.metadata = search_results[0]
+                
+    def get_onehot_genres(self):
+        """
+        Returns a one-hot encoding of the genres of the film in a list, in alphabetical order as
+        in tmdb_genres.
+        """
+        one_hot = [0 for _ in range(len(tmdb_genres))]
+        if not self.genres:
+            return one_hot
+        for i, genre in enumerate(tmdb_genres):
+            if genre["name"] in self.genres.values():
+                one_hot[i] = 1
+        return one_hot
         
     def __str__(self):
         return f"title: {self.title}\n" + \
