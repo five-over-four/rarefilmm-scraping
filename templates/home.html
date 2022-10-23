@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}
+Rarefilmm Recommender
+{% endblock %}
+{% block content %}
+<link rel="stylesheet" type = text/css href = "{{ url_for('static', filename='style.css') }}">
+<style type=text/css>
+body {
+    background-image: url({{ random_background }})
+}
+</style>
+<div class="content">
+<div class="title-box">
+    <div class="title-fancy">Rarefilmm Recommender</div>
+</div>
+
+<div class="inner-content">
+
+    <h1>{{ search_report }}</h1>
+
+    {% autoescape false %}
+    {{ display_html }}
+    {% endautoescape %}
+
+    <div class="lower-segment">
+        <form method = "POST">
+            <div class="search-bar">
+                <label for="movies">How many recommendations do you want?</label>
+                <select name="number" method="POST" action="/">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5" SELECTED>5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+                <input 
+                    type="movies" 
+                    class="form-control" 
+                    id="movies" 
+                    name="movies" 
+                    placeholder="Enter a movie you'd like to get recommendations based on.">
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<br>
+(Refresh page to change background poster)
+</div>
+
+{% endblock %}
