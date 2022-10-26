@@ -1,4 +1,5 @@
 .env
 /data/tmdb_dataset
 venv
-
+templates/__pycache__/
+test_scripts/__pycache__/

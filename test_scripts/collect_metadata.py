@@ -13,7 +13,7 @@ df = None
 
 # set this when importing.
 # cm.API_KEY = api_string
-API_KEY = None
+API_KEY = '08bfcffdd73f2bfad0410dc1914be2c6'
 
 # # Functions to fetch movie data
 
@@ -25,6 +25,16 @@ def search_and_parse(request):
     result = requests.get(f"https://api.themoviedb.org/3/search/movie?api_key={API_KEY}&query={request}")
     text = result.text.replace("false", "False").replace("true", "True").replace("null", "None")
     return eval(text)["results"]
+
+
+def get_detailed_movie_info(id):
+    result = requests.get(f"https://api.themoviedb.org/3/movie/{id}?api_key={API_KEY}")
+    text = result.text.replace("false", "False").replace("true", "True").replace("null", "None")
+    try:
+        return eval(text)
+    except Exception as e:
+        print('Error occurred: ', e)
+        print(text)
 
 def cut_documentaries(req_dict):
     """
@@ -55,12 +65,12 @@ def get_search_results(movie_list, genres=None):
     genres = [None]*len(movie_list) if not genres else genres
     results = []
     
-    for movie, genre in zip(movie_list, genres):
+    for i, (movie, genre) in enumerate(zip(movie_list, genres)):
+        print("getting data for " + movie + " number " + str(i) + " out of " + str(len(movie_list)))
         if genre == "Documentary":
             results.append(search_and_parse(movie))
         else:
             results.append(cut_documentaries(search_and_parse(movie)))
-
     return results
 
 
@@ -84,6 +94,16 @@ tmdb_genres = [{'id': 28, 'name': 'Action'}, {'id': 12, 'name': 'Adventure'}, {'
                 {'id': 9648, 'name': 'Mystery'}, {'id': 10749, 'name': 'Romance'}, {'id': 878, 'name': 'Science Fiction'}, \
                 {'id': 10770, 'name': 'TV Movie'}, {'id': 53, 'name': 'Thriller'}, {'id': 10752, 'name': 'War'}, {'id': 37, 'name': 'Western'}]
 
+tmdb_countries = ['afghanistan', 'albania', 'algeria', 'angola', 'argentina', 'australia', 'austria', 'belgium', 
+                  'bolivia', 'brazil', 'bulgaria', 'burkina faso', 'cameroon', 'canada', 'chile', 'china', 'colombia',
+                  "cote d'ivoire", 'cuba', 'czech republic', 'czechoslovakia', 'denmark', 'east germany', 'egypt', 
+                  'el salvador', 'estonia', 'finland', 'france', 'georgia', 'germany', 'greece', 'guinea-bissau', 'hong kong',
+                  'hungary', 'india', 'indonesia', 'iran', 'ireland', 'israel', 'italy', 'japan', 'kazakhstan', 'latvia', 'lebanon',
+                  'lithuania', 'malaysia', 'mexico', 'netherlands', 'new zealand', 'nicaragua', 'norway', 'pakistan', 'palestinian territory',
+                  'peru', 'philippines', 'poland', 'portugal', 'romania', 'russia', 'senegal', 'south africa', 'south korea', 'soviet union',
+                  'spain', 'sri lanka', 'sudan', 'sweden', 'switzerland', 'syrian arab republic', 'taiwan', 'thailand', 'turkey', 'united kingdom',
+                  'united states of america', 'yugoslavia', 'zimbabwe']
+
 def translate_ids_to_genres(ids):
     """
     Takes list of genre_id such as [28, 80] and returns ["Action", "Crime"]
@@ -105,20 +125,26 @@ class Movie:
     def __init__(self, search_results, from_rarefilmm=False, df=None):
         self.from_rarefilmm = from_rarefilmm
         self.df = df # in case we search from the rarefilmm df, then this is the row.
+        print('df: ', self.df)
         self.select_movie(search_results, from_rarefilmm) # set self.metadata
 
         if self.metadata:
             self.extract_data()
-
+        
         # this happens when the search results on TMDB are empty.
         else:
+            self.tmdb_id = None
             self.title = None
             self.genres = None
             self.release_date = None
+            self.release_year = None
             self.poster = None
-            self.overview = None
+            self.description = None
             self.vote_average = None
             self.vote_count = None
+            self.country = None
+            self.genre_onehot = None
+            self.country_onehot = None
             if from_rarefilmm: # but we should still set the data by the dataframe.
                 self.title = df["title"]
                 if df["genre"] == "Sci-Fi": # this exception causes problems.
@@ -127,7 +153,8 @@ class Movie:
                     self.genres = {genre["id"]: genre["name"] for genre in tmdb_genres if genre["name"] == df["genre"]}
                 self.release_date = df["year"]
                 self.poster = df["poster-path"]
-                self.overview = df["description"]
+                self.description = df["description"]
+        print("extracted data for " + self.title)
         
     def extract_data(self):
         """
@@ -142,8 +169,9 @@ class Movie:
         else:
             self.genres = None
         self.title = self.metadata["original_title"]
-        self.overview = self.metadata["overview"]
+        self.description = self.metadata["overview"]
         if self.metadata["release_date"]:
+            self.release_year = int(self.metadata["release_date"][:4])
             if len(self.metadata["release_date"]) < 10:
                 self.release_date = int(self.metadata["release_date"][:4])
             else:
@@ -152,14 +180,34 @@ class Movie:
             self.poster = "https://image.tmdb.org/t/p/original" + self.metadata["poster_path"]
         else:
             if self.from_rarefilmm: # if we can't find poster on TMDB for RF film, use RF poster.
-                if np.isnan(self.df["tmdb-poster"]):
+                if pd.isna(self.df["tmdb-poster"]):
                     self.poster = self.df["poster-path"]
                 else:
                     self.poster = self.df["tmdb-poster"]
             else:
                 self.poster = None
+        if self.metadata["production_countries"] and len(self.metadata["production_countries"]) > 0:
+            self.country = self.metadata["production_countries"][0]['name'].lower()
+        else:
+            if df and df["country"]:
+                if df["country"] == 'USA':
+                    self.country = 'united states of america'    
+                elif df["country"] == 'UK':
+                    self.country = 'united kingdom'
+                elif df["country"] == 'USSR':
+                    self.country = 'soviet union'
+                self.country = df["country"].lower()
+            else:
+                self.country = None
+        # elif self.df:
+        #     self.country = self.df["country"].lower()
+                   
         self.vote_average = self.metadata["vote_average"]
         self.vote_count = self.metadata["vote_count"]
+        self.tmdb_id = self.metadata["id"]
+        self.assign_genre_onehot_encoding()
+        self.assign_country_onehot_encoding()
+        
 
     def select_movie(self, search_results, from_rarefilmm):
         """
@@ -172,9 +220,13 @@ class Movie:
             genre = self.df["genre"]
             if genre == "Sci-Fi": genre = "Science Fiction"
             best_result = (None, 0)
-            
             # the scoring system. max 2 points for title, 1 for genre, 1 for year.
             for result in search_results:
+                genre_ids = result["genre_ids"]
+                result = get_detailed_movie_info(result['id'])
+                if not result:
+                    continue
+                result['genre_ids'] = genre_ids
                 correct_score = 0
                 if "original_title" in result.keys():
                     correct_score += title_similarity(result["original_title"], self.df["title"]) * 2
@@ -183,16 +235,22 @@ class Movie:
                         correct_score += 1
                     elif result["release_date"]:
                         correct_score += 1 / (abs(int(result["release_date"][:4]) - year) + 1)
+                if "production_countries" in result.keys():
+                    if len(result["production_countries"])>0:
+                        correct_score += title_similarity(result["production_countries"][0]["name"].lower(), self.df["country"])
                 if "genre_ids" in result.keys() and genre in translate_ids_to_genres(result["genre_ids"]): correct_score += 1
+                # if "production_countries" in result.keys():
+                    
                 best_result = (result, correct_score) if correct_score > best_result[1] else best_result
-            
             self.metadata = best_result[0]
 
         else:
             if not search_results:
                 self.metadata = None
             else:
-                self.metadata = search_results[0]
+                result = get_detailed_movie_info(search_results[0]['id'])
+                result['genre_ids'] = search_results[0]['genre_ids']
+                self.metadata = result
                 
     def get_onehot_genres(self):
         """
@@ -206,15 +264,72 @@ class Movie:
             if genre["name"] in self.genres.values():
                 one_hot[i] = 1
         return one_hot
+    
+    def get_onehot_countries(self):
+        """
+        Returns a one-hot encoding of the country of the film in a list, in alphabetical order as
+        in tmdb_countries.
+        """
+        one_hot = [0 for _ in range(len(tmdb_countries))]
+        if not self.country:
+            return one_hot
+        else:
+            for i, country in enumerate(tmdb_countries):
+                if country == self.country:
+                    one_hot[i] = 1
+            return one_hot
+    
+    def assign_genre_onehot_encoding(self):
+        genre_onehot = {}
+        onehot = self.get_onehot_genres()
+        for i, genre in enumerate(tmdb_genres):
+            # print("genre: ", genre)
+            genre_onehot[genre["name"]] = onehot[i]
+        self.genre_onehot = genre_onehot
+        
+    def assign_country_onehot_encoding(self):
+        country_onehot = {}
+        onehot = self.get_onehot_countries()
+        for i, country in enumerate(tmdb_countries):
+            country_onehot[country] = onehot[i]
+        self.country_onehot = country_onehot
+            
+    def get_df_row(self):
+        try:
+            data = {"title": self.title, "description": self.description, "country": self.country, "tmdb_id": self.tmdb_id, "release_year": self.release_year, "vote_average": self.vote_average, "vote_count": self.vote_count}
+            if not self.genre_onehot:
+                print("No genre_onehot found for " + self.title)
+                print(self.get_onehot_genres())
+                print(self.df)
+            elif not self.country_onehot:
+                print("No country_onehot found for " + self.title)
+                print(self.get_onehot_countries())
+                print(self.df)
+            print('predata')
+            data = {**data, **self.genre_onehot}
+            print('data: ', data)
+            data = {**data, **self.country_onehot}
+            print('data: ', data)
+            return pd.Series(data=data, index=data.keys())
+        except Exception as e:
+            print("error happened: ", e)
+            print(self.genre_onehot)
+            print(self.country_onehot)
+            return pd.Series(data={"title": self.title}, index=["title"])
         
     def __str__(self):
         return f"title: {self.title}\n" + \
+                f"tmdb_id: {self.tmdb_id}\n" + \
                 f"genres: {self.genres}\n" + \
-                f"release: {self.release_date}\n" + \
+                f"release_date: {self.release_date}\n" + \
+                f"release_year: {self.release_year}\n" + \
                 f"vote_average: {self.vote_average}\n" + \
                 f"vote_count: {self.vote_count}\n\n" + \
-                f"overview: {self.overview}\n\n" + \
-                f"poster: {self.poster}"
+                f"description: {self.description}\n\n" + \
+                f"poster: {self.poster}\n\n" + \
+                f"genre_onehot: {self.genre_onehot}\n\n" + \
+                f"genre_onehot: {self.country_onehot}\n\n" + \
+                f"country: {self.country}"
     
 def get_movies(movie_list, from_rarefilmm=False):
     """

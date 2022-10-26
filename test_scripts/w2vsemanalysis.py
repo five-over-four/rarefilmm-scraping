@@ -1,31 +1,40 @@
-
+from math import floor
+import numpy as np
 import spacy
 import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
-sys.path.append('../lib')
+# sys.path.append('../templates')
 from collect_metadata import get_movies, tmdb_genres
-
+pd.set_option('display.max_colwidth', None)
+pd.set_option('display.max_columns', None)  # these two lines make it so that the columns are shown in full
 nlp = spacy.load('en_core_web_md')
 
 df = pd.read_csv('../data/rf_data.csv')
-print(df.shape) # (2771, 9)
+print(df.columns)
+# print(df['country'])
+movie_name = 'Les jeux de la Comtesse Dolingen de Gratz'
+movies = get_movies([movie_name])
+movie = movies[0]
+print('movie:')
+print(movie)
+df_row = movie.get_df_row()
+df = pd.concat([df, df_row.to_frame().T], ignore_index=True)
 
-df.dropna(axis=0, inplace=True) # drop rows with at least one missing value
-print(df.shape) # (2757, 9), removed 14 rows
+last_row = len(df.index)-1
 
 
-descriptions = df['description']
-titles = df['title']
+df.dropna(axis=0, inplace=True, subset=df.columns.difference(['Unnamed: 0', 'tmdb-poster', 'url', 'poster-path', 'genre', 'country'])) # drop rows with at least one missing values
+for i in range(len(df['country'])):
+  print(str(df.iloc[i]['title']) +', ' + str(df.iloc[i]['country'])+', '+str(df.iloc[i]['vote_count'])+', '+str(df.iloc[i]['tmdb-poster']))
 
 
-def create_w2v_vector(main_desc, df):
+
+def create_w2v_vector(movie, df):
 
   descriptions = df['description']
   docs = [nlp(' '.join([str(t) for t in nlp(description) if t.pos_ in ['NOUN', 'PROPN']])) for description in descriptions]
-  movie_name = main_desc
-  movie = get_movies([movie_name])
   movie_nlp = nlp(' '.join([str(t) for t in nlp(movie[0].overview) if t.pos_ in ['NOUN', 'PROPN']]))
 
   similarity = []
@@ -37,11 +46,9 @@ def create_w2v_vector(main_desc, df):
 
   new_df['similarity_score'] = similarity
 
-  pd.set_option('display.max_colwidth', None)
-  pd.set_option('display.max_columns', None)  # these two lines make it so that the columns are shown in full
+  
 
   new_df.sort_values(by=['similarity_score'], inplace=True, ascending=False)
-  print(new_df.head(20))
   return new_df
 
 
@@ -84,39 +91,16 @@ def normalize(data):
     return [x/max_val for x in data]
 
 
-from numpy import array
-from numpy import argmax
-from sklearn.preprocessing import LabelEncoder
-from sklearn.preprocessing import OneHotEncoder
+feature_df = pd.DataFrame()
+# feature_df.drop(["genre", "url", "poster-path", "tmdb-poster"],inplace=True, axis=1)
+df.reset_index(drop=True, inplace=True)
 
+feature_df["vote_average"] = normalize(df["vote_average"])
+feature_df["vote_count"] = normalize(df["vote_count"])
+feature_df["year"] = normalize(df["year"])
+# print(feature_df)
+# print(feature_df.iloc[-1:])
 
-
-def onehot_encode(data):
-  # integer encode
-  values=data
-  label_encoder = LabelEncoder()
-  integer_encoded = label_encoder.fit_transform(values)
-  print('test2')
-  # binary encode
-  onehot_encoder = OneHotEncoder(sparse=False)
-  integer_encoded = integer_encoded.reshape(len(integer_encoded), 1)
-  onehot_encoded = onehot_encoder.fit_transform(integer_encoded)
-  print(onehot_encoded)
-  print('test3')
-  # invert first example
-  inverted = label_encoder.inverse_transform([argmax(onehot_encoded[0, :])])
-  print(inverted)
-  return {'onehot': onehot_encoded, 'label': inverted}
-  
-  
-genres = df['genre']
-print('test1')
-print(genres.iloc[0])
-print('test2.5')
-print(tmdb_genres)
-genre_names = [genre['name'] for genre in tmdb_genres]
-print(genre_names)
-onehot_ex = onehot_encode(genre_names)
-print(onehot_ex)
-print(onehot_ex['onehot'])
-# df['genre'] = df.apply(lambda row: , axis=1)
+# data = onehot_encode(feature_df, 'country')
+# print(data.head(15))
+# feature_df.sort_values(by=['year'], inplace=True, ascending=False)
