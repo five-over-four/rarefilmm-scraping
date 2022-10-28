@@ -5,7 +5,7 @@ import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
 nlp = spacy.load('en_core_web_md')
-from collect_metadata import get_movies, tmdb_genres
+# from . import collect_metadata as cm #import get_movies, tmdb_genres
 # pd.set_option('display.max_colwidth', None)
 # pd.set_option('display.max_columns', None)  # these two lines make it so that the columns are shown in full
 

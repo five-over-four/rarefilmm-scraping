@@ -296,7 +296,7 @@ class Movie:
             
     def get_df_row(self):
         try:
-            data = {"title": self.title, "description": self.description, "country": self.country, "tmdb_id": self.tmdb_id, "release_year": self.release_year, "vote_average": self.vote_average, "vote_count": self.vote_count}
+            data = {"title": self.title, "description": self.description, "country": self.country, "tmdb_id": self.tmdb_id, "poster": self.poster, "release_year": self.release_year, "vote_average": self.vote_average, "vote_count": self.vote_count}
             if not self.genre_onehot:
                 print("No genre_onehot found for " + self.title)
                 print(self.get_onehot_genres())
@@ -305,11 +305,8 @@ class Movie:
                 print("No country_onehot found for " + self.title)
                 print(self.get_onehot_countries())
                 print(self.df)
-            print('predata')
             data = {**data, **self.genre_onehot}
-            print('data: ', data)
             data = {**data, **self.country_onehot}
-            print('data: ', data)
             return pd.Series(data=data, index=data.keys())
         except Exception as e:
             print("error happened: ", e)

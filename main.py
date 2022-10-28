@@ -1,9 +1,10 @@
 from flask import Flask, redirect, url_for, render_template, request
-from templates import collect_metadata as cm
+from test_scripts import collect_metadata as cm
 from templates import generate_html as genhtml
 import pandas as pd
 from random import randint
 import webbrowser
+from test_scripts import movie_recommendation
       
 cm.API_KEY = "08bfcffdd73f2bfad0410dc1914be2c6"
 cm.df = pd.read_csv("./data/rf_data.csv")
@@ -16,9 +17,11 @@ def select_poster(df):
     priority for TMDB, if it exists.
     2496 / 2771 have a tmdb poster.
     """
-    if len(str(df["tmdb-poster"])) == 3:
-        return df["poster-path"]
-    return df["tmdb-poster"]
+    
+    if len(str(df["poster"])) == 3:
+        raw_df_movie = cm.df.loc[cm.df["title"]==df["title"]]
+        return raw_df_movie["poster-path"]
+    return df["poster"]
 
 def select_genres(df):
     """
@@ -28,16 +31,16 @@ def select_genres(df):
     """
     if (df.iloc[11:] == 0).all(): # this is the one-hot columns.
         return df["genre"]
-    df = df.iloc[11:]
-    return ", ".join(df[df == 1].index.format())
+    new_df = df.loc['Action':'Western']
+    return ", ".join(new_df[new_df == 1].index.format())
 
-def generate_background():
+def generate_background(df):
     """
     The random background picker, whenever the user refreshes.
     Just for fun.
     """
-    n = cm.df.shape[0] - 1
-    return select_poster(cm.df.iloc[randint(0,n)])
+    n = df.shape[0] - 1
+    return select_poster(df.iloc[randint(0,n)])
 
 def format_date(date):
     """
@@ -82,7 +85,7 @@ def movies_to_html_block(movies):
     for film in movies:
         html_block = html_block + \
                 genhtml.generate_html_block({
-                    "year": f"({format_date(film['year'])})",
+                    "year": f"({format_date(film['release_year'])})",
                     "title": film["title"], 
                     "poster": select_poster(film), 
                     "overview": film["description"],
@@ -97,8 +100,9 @@ def home():
     """
     on localhost:5000/home or just localhost:5000.
     """
+    print('Hellouu')
 
-    background_poster = generate_background()
+    background_poster = generate_background(movie_recommendation.df)
     search_report = "" # This says 'Recommendations based on x:' at the top after searching.
 
     # after a single search, it's always POST, since we keep resubmitting the request on each
@@ -115,16 +119,16 @@ def home():
             how_many_recommendations = int(request.form.get("number").strip())
         except:
             how_many_recommendations = 5
-        search = request.form.get("movies")
-        search_result = cm.get_movies([search])[0]
-        movies = [cm.df.iloc[randint(0,cm.df.shape[0]-1)] for x in range(how_many_recommendations)] # totally just at random for now.
-        if not search_result.title: # nothing turned up.
+        search_movie = request.form.get("movies")
+        print('search_movie: ', search_movie)
+        recommended_movies = movie_recommendation.get_movie_recommendations(search_movie, how_many_recommendations)
+        # movies = [cm.df.iloc[randint(0,cm.df.shape[0]-1)] for x in range(how_many_recommendations)] # totally just at random for now.
+        if len(recommended_movies)==0: # nothing turned up.
             display_html = give_error_page()
             search_report = ""
-
         else:
-            display_html = movies_to_html_block(movies)
-            search_report = f"Recommendations based on '{search}':"
+            display_html = movies_to_html_block(recommended_movies)
+            search_report = f"Recommendations based on '{search_movie}':"
 
     return render_template("home.html", display_html=display_html, random_background=background_poster, search_report=search_report, numbers=[*range(1,11)])
 
@@ -133,7 +137,7 @@ def info():
     """
     on localhost:5000/info. contains information about the project.
     """
-    return render_template("info.html", random_background=generate_background())
+    return render_template("info.html", random_background=generate_background(movie_recommendation.df))
 
 if __name__ == "__main__":
     """

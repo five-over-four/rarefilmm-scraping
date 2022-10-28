@@ -19,7 +19,7 @@ for movie in tmdb_movies:
     
 print(tmdb_df)
 
-tmdb_df.to_csv('tmdb_data.csv', index=False)  
+tmdb_df.to_csv('tmdb_data_2.csv', index=False)  
 
 
 
