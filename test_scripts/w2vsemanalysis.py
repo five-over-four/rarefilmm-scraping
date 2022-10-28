@@ -5,6 +5,7 @@ import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
 nlp = spacy.load('en_core_web_md')
+from .df import df
 # from . import collect_metadata as cm #import get_movies, tmdb_genres
 # pd.set_option('display.max_colwidth', None)
 # pd.set_option('display.max_columns', None)  # these two lines make it so that the columns are shown in full
@@ -28,16 +29,27 @@ nlp = spacy.load('en_core_web_md')
 # for i in range(len(df['country'])):
 #   print(str(df.iloc[i]['title']) +', ' + str(df.iloc[i]['country'])+', '+str(df.iloc[i]['vote_count'])+', '+str(df.iloc[i]['tmdb-poster']))
 
+docs = []
 
+def initialize_docs():
+  print('preprocess df')
+  print(df)
+  df.dropna(axis=0, inplace=True, subset=df.columns.difference(['country']))
+  df.reset_index(drop=True, inplace=True)
+  global docs
+  docs = [nlp(' '.join([str(t) for t in nlp(str(description)) if t.pos_ in ['NOUN', 'PROPN']])) for description in df['description']]
+  print('preprocess finished')
 
-def create_w2v_vector(cmp_row, df):
-  docs = [nlp(' '.join([str(t) for t in nlp(description) if t.pos_ in ['NOUN', 'PROPN']])) for description in df['description']]
+def create_w2v_vector(cmp_row, df_2):
+  global docs
+  print('len docs: ', len(docs))
   cmp_row_nlp = nlp(' '.join([str(t) for t in nlp(str(cmp_row['description'])) if t.pos_ in ['NOUN', 'PROPN']]))
   similarity = []
   for i in range(len(docs)):
     similarity.append(cmp_row_nlp.similarity(docs[i]))
-  df['similarity_score'] = similarity
-  return df
+  similarity.append(1) # the movie on which recommendations are based has a perfect match with itself
+  df_2['similarity_score'] = similarity
+  return df_2
 
 
 # def create_heatmap(similarity, cmap = "YlGnBu"):

@@ -29,6 +29,8 @@ def generate_html_block(movie):
                 <br><br>
                     <div class='genres'>
                         {movie["genre"]}
+                        <br>
+                        {movie["country"]}
                     </div>
                 </div>
 

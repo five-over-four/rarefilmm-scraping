@@ -5,6 +5,7 @@ import pandas as pd
 from random import randint
 import webbrowser
 from test_scripts import movie_recommendation
+from test_scripts import w2vsemanalysis as w2v
       
 cm.API_KEY = "08bfcffdd73f2bfad0410dc1914be2c6"
 cm.df = pd.read_csv("./data/rf_data.csv")
@@ -34,6 +35,13 @@ def select_genres(df):
     new_df = df.loc['Action':'Western']
     return ", ".join(new_df[new_df == 1].index.format())
 
+def format_countries(df):
+    new_df = df.loc['afghanistan':'zimbabwe']
+    countries = new_df[new_df == 1].index.format()
+    for i in range(len(countries)):
+        countries[i] = countries[i].title()
+    return ", ".join(countries)
+
 def generate_background(df):
     """
     The random background picker, whenever the user refreshes.
@@ -60,7 +68,7 @@ def give_front_page():
             "title": "Welcome!",
             "overview": "Search for a movie below to get recommendations from the <a href='https://rarefilmm.com'>Rarefilmm</a> database! \
                         The recommendations will be based on various properties of the user's movie, such as description, genre(s), ratings...",
-            "genre": ""})
+            "genre": "", "country": ""})
 
 def give_error_page():
     """
@@ -89,7 +97,8 @@ def movies_to_html_block(movies):
                     "title": film["title"], 
                     "poster": select_poster(film), 
                     "overview": film["description"],
-                    "genre": f'Genres: {select_genres(film)}'
+                    "genre": f'Genres: {select_genres(film)}',
+                    "country": f'Countries: {format_countries(film)}'
                 })
     return html_block
 
@@ -148,4 +157,7 @@ if __name__ == "__main__":
     # uncomment if you want the browser to open here automatically.
     # NOT COMPATIBLE WITH HEROKU.
     #webbrowser.open_new_tab("http://127.0.0.1:5000")
+    w2v.initialize_docs()
+    print('here again')
     app.run(debug=False, port=5000)
+    

@@ -142,9 +142,9 @@ class Movie:
             self.description = None
             self.vote_average = None
             self.vote_count = None
-            self.country = None
+            self.countries = None
             self.genre_onehot = None
-            self.country_onehot = None
+            self.countries_onehot = None
             if from_rarefilmm: # but we should still set the data by the dataframe.
                 self.title = df["title"]
                 if df["genre"] == "Sci-Fi": # this exception causes problems.
@@ -187,20 +187,24 @@ class Movie:
             else:
                 self.poster = None
         if self.metadata["production_countries"] and len(self.metadata["production_countries"]) > 0:
-            self.country = self.metadata["production_countries"][0]['name'].lower()
+            countries = []
+            if len(self.metadata["production_countries"]) > 1:
+                print('More than two countries: ', self.title)
+            for country in self.metadata["production_countries"]:
+                countries.append(country['name'].lower())
+            self.countries = countries
         else:
             if df and df["country"]:
                 if df["country"] == 'USA':
-                    self.country = 'united states of america'    
+                    self.countries = ['united states of america']
                 elif df["country"] == 'UK':
-                    self.country = 'united kingdom'
+                    self.countries = ['united kingdom']
                 elif df["country"] == 'USSR':
-                    self.country = 'soviet union'
-                self.country = df["country"].lower()
+                    self.countries = ['soviet union']
+                else:
+                    self.countries = [df["country"].lower()]
             else:
-                self.country = None
-        # elif self.df:
-        #     self.country = self.df["country"].lower()
+                self.countries = None
                    
         self.vote_average = self.metadata["vote_average"]
         self.vote_count = self.metadata["vote_count"]
@@ -224,6 +228,7 @@ class Movie:
             for result in search_results:
                 genre_ids = result["genre_ids"]
                 result = get_detailed_movie_info(result['id'])
+                print('Detailed info: ', result)
                 if not result:
                     continue
                 result['genre_ids'] = genre_ids
@@ -249,6 +254,7 @@ class Movie:
                 self.metadata = None
             else:
                 result = get_detailed_movie_info(search_results[0]['id'])
+                print('Detailed info: ', result)
                 result['genre_ids'] = search_results[0]['genre_ids']
                 self.metadata = result
                 
@@ -271,11 +277,11 @@ class Movie:
         in tmdb_countries.
         """
         one_hot = [0 for _ in range(len(tmdb_countries))]
-        if not self.country:
+        if not self.countries:
             return one_hot
         else:
             for i, country in enumerate(tmdb_countries):
-                if country == self.country:
+                if country in self.countries:
                     one_hot[i] = 1
             return one_hot
     
@@ -292,26 +298,26 @@ class Movie:
         onehot = self.get_onehot_countries()
         for i, country in enumerate(tmdb_countries):
             country_onehot[country] = onehot[i]
-        self.country_onehot = country_onehot
+        self.countries_onehot = country_onehot
             
     def get_df_row(self):
         try:
-            data = {"title": self.title, "description": self.description, "country": self.country, "tmdb_id": self.tmdb_id, "poster": self.poster, "release_year": self.release_year, "vote_average": self.vote_average, "vote_count": self.vote_count}
+            data = {"title": self.title, "description": self.description, "country": self.countries, "tmdb_id": self.tmdb_id, "poster": self.poster, "release_year": self.release_year, "vote_average": self.vote_average, "vote_count": self.vote_count}
             if not self.genre_onehot:
                 print("No genre_onehot found for " + self.title)
                 print(self.get_onehot_genres())
                 print(self.df)
-            elif not self.country_onehot:
+            elif not self.countries_onehot:
                 print("No country_onehot found for " + self.title)
                 print(self.get_onehot_countries())
                 print(self.df)
             data = {**data, **self.genre_onehot}
-            data = {**data, **self.country_onehot}
+            data = {**data, **self.countries_onehot}
             return pd.Series(data=data, index=data.keys())
         except Exception as e:
             print("error happened: ", e)
             print(self.genre_onehot)
-            print(self.country_onehot)
+            print(self.countries_onehot)
             return pd.Series(data={"title": self.title}, index=["title"])
         
     def __str__(self):
@@ -325,8 +331,8 @@ class Movie:
                 f"description: {self.description}\n\n" + \
                 f"poster: {self.poster}\n\n" + \
                 f"genre_onehot: {self.genre_onehot}\n\n" + \
-                f"genre_onehot: {self.country_onehot}\n\n" + \
-                f"country: {self.country}"
+                f"genre_onehot: {self.countries_onehot}\n\n" + \
+                f"country: {self.countries}"
     
 def get_movies(movie_list, from_rarefilmm=False):
     """
