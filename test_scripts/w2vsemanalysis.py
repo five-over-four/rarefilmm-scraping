@@ -1,11 +1,12 @@
 from math import floor
 import numpy as np
 import spacy
+from spacy.tokens import DocBin
 import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
 nlp = spacy.load('en_core_web_md')
-from .df import df
+from .df import df, docs
 # from . import collect_metadata as cm #import get_movies, tmdb_genres
 # pd.set_option('display.max_colwidth', None)
 # pd.set_option('display.max_columns', None)  # these two lines make it so that the columns are shown in full
@@ -28,21 +29,36 @@ from .df import df
 # df.dropna(axis=0, inplace=True, subset=df.columns.difference(['Unnamed: 0', 'tmdb-poster', 'url', 'poster-path', 'genre', 'country'])) # drop rows with at least one missing values
 # for i in range(len(df['country'])):
 #   print(str(df.iloc[i]['title']) +', ' + str(df.iloc[i]['country'])+', '+str(df.iloc[i]['vote_count'])+', '+str(df.iloc[i]['tmdb-poster']))
-
-docs = []
+# docs = []
 
 def initialize_docs():
   print('preprocess df')
   print(df)
   df.dropna(axis=0, inplace=True, subset=df.columns.difference(['country']))
   df.reset_index(drop=True, inplace=True)
-  global docs
-  docs = [nlp(' '.join([str(t) for t in nlp(str(description)) if t.pos_ in ['NOUN', 'PROPN']])) for description in df['description']]
+  # global docs
+  
+  doc_bin = DocBin()
+  for doc in nlp.pipe(df['description']):
+    doc_bin.add(doc)
+  bytes_data = doc_bin.to_bytes()
+  # # docs_prc = [nlp(' '.join([str(t) for t in nlp(str(description)) if t.pos_ in ['NOUN', 'PROPN']])) for description in df['description']]
+  # print("docs_prc:")
+  # for doc in docs_prc:
+  #   print(docs)
+  # docs_arr_bytes = np.array(docs_prc).tobytes()
+  f = open("rf_docs.bin", "wb")
+  f.write(bytes_data)
+  f.close()
+  
   print('preprocess finished')
 
-def create_w2v_vector(cmp_row, df_2):
-  global docs
+
+
+def create_w2v_vector(cmp_row, df_2): 
+  # global docs
   print('len docs: ', len(docs))
+  print(docs)
   cmp_row_nlp = nlp(' '.join([str(t) for t in nlp(str(cmp_row['description'])) if t.pos_ in ['NOUN', 'PROPN']]))
   similarity = []
   for i in range(len(docs)):
@@ -71,6 +87,8 @@ def create_w2v_vector(cmp_row, df_2):
 
   # plt.show()
 
+# def normalize_onehots(df):
+  
 
 def normalize(data):
     '''

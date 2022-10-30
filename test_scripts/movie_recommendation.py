@@ -18,6 +18,7 @@ def get_movie_recommendations(movie_name, n_recs):
     new_df["vote_average"] = w2v.normalize(new_df["vote_average"])
     new_df["vote_count"] = w2v.normalize(new_df["vote_count"])
     new_df["release_year"] = w2v.normalize(new_df["release_year"])
+    # new_df = w2v.normalize_onehots(new_df)
     cmp_movie = new_df.iloc[-1:]
     new_df = w2v.create_w2v_vector(cmp_movie, new_df)
     feature_df = new_df.drop(columns=["country", 'tmdb_id', 'description', 'title', 'poster'])

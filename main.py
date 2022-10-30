@@ -157,7 +157,7 @@ if __name__ == "__main__":
     # uncomment if you want the browser to open here automatically.
     # NOT COMPATIBLE WITH HEROKU.
     #webbrowser.open_new_tab("http://127.0.0.1:5000")
-    w2v.initialize_docs()
+    # w2v.initialize_docs()
     print('here again')
     app.run(debug=False, port=5000)
     

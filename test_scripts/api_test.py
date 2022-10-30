@@ -1,14 +1,15 @@
-
-from collect_metadata import get_movies, tmdb_genres
-import pandas as pd
-pd.set_option('display.max_colwidth', None)
-pd.set_option('display.max_columns', None)  # these two lines make it so that the columns are shown in full 
-
-
-df = pd.read_csv('tmdb_data_3.csv')
-
-df_row = df.loc[df['title'] == 'Jours tranquilles à Clichy']
-
-print(df_row)
-
-
+def initialize_docs():
+  print('preprocess df')
+  print(df)
+  df.dropna(axis=0, inplace=True, subset=df.columns.difference(['country']))
+  df.reset_index(drop=True, inplace=True)
+  global docs
+  docs_prc = [nlp(' '.join([str(t) for t in nlp(str(description)) if t.pos_ in ['NOUN', 'PROPN']])) for description in df['description']]
+  docs_arr_bytes = np.array(docs_prc).tobytes()
+  f = open("rf_docs.bin", "wb")
+  f.write(docs_arr_bytes)
+  f.close()
+  
+  print('preprocess finished')
+  
+initialize_docs()
