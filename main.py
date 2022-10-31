@@ -68,7 +68,8 @@ def give_front_page():
             "title": "Welcome!",
             "overview": "Search for a movie below to get recommendations from the <a href='https://rarefilmm.com'>Rarefilmm</a> database! \
                         The recommendations will be based on various properties of the user's movie, such as description, genre(s), ratings...",
-            "genre": "", "country": ""})
+            "genre": "", 
+            "country": ""})
 
 def give_error_page():
     """
@@ -81,7 +82,8 @@ def give_error_page():
             "year": "",
             "title": "Nothing found in the search!",
             "overview": "Your search yielded no results from the TMDB database; try a different query.",
-            "genre": ""})
+            "genre": "",
+            "country": ""})
 
 def movies_to_html_block(movies):
     """
@@ -109,7 +111,6 @@ def home():
     """
     on localhost:5000/home or just localhost:5000.
     """
-    print('Hellouu')
 
     background_poster = generate_background(movie_recommendation.df)
     search_report = "" # This says 'Recommendations based on x:' at the top after searching.
@@ -129,10 +130,9 @@ def home():
         except:
             how_many_recommendations = 5
         search_movie = request.form.get("movies")
-        print('search_movie: ', search_movie)
         recommended_movies = movie_recommendation.get_movie_recommendations(search_movie, how_many_recommendations)
         # movies = [cm.df.iloc[randint(0,cm.df.shape[0]-1)] for x in range(how_many_recommendations)] # totally just at random for now.
-        if len(recommended_movies)==0: # nothing turned up.
+        if not recommended_movies: # nothing turned up.
             display_html = give_error_page()
             search_report = ""
         else:
@@ -158,6 +158,5 @@ if __name__ == "__main__":
     # NOT COMPATIBLE WITH HEROKU.
     #webbrowser.open_new_tab("http://127.0.0.1:5000")
     # w2v.initialize_docs()
-    print('here again')
     app.run(debug=False, port=5000)
-    
+   
