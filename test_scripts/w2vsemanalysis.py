@@ -32,8 +32,6 @@ from .df import df, docs
 # docs = []
 
 def initialize_docs():
-  print('preprocess df')
-  print(df)
   df.dropna(axis=0, inplace=True, subset=df.columns.difference(['country']))
   df.reset_index(drop=True, inplace=True)
   # global docs
@@ -57,8 +55,6 @@ def initialize_docs():
 
 def create_w2v_vector(cmp_row, df_2): 
   # global docs
-  print('len docs: ', len(docs))
-  print(docs)
   cmp_row_nlp = nlp(' '.join([str(t) for t in nlp(str(cmp_row['description'])) if t.pos_ in ['NOUN', 'PROPN']]))
   similarity = []
   for i in range(len(docs)):
