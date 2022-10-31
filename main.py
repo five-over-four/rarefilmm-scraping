@@ -101,7 +101,7 @@ def movies_to_html_block(movies, search_movie=None):
                     "overview": search_movie["description"],
                     "genre": f'Genres: {select_genres(search_movie)}',
                     "country": f'Countries: {format_countries(search_movie)}'
-                }) + "<hr>"
+                }) + "<div class='title-box'></div><br>"
     for film in movies:
         html_block = html_block + \
                 genhtml.generate_html_block({
@@ -176,3 +176,4 @@ if __name__ == "__main__":
     #webbrowser.open_new_tab("http://127.0.0.1:5000")
     # w2v.initialize_docs()
     app.run(debug=False, port=5000)
+   
