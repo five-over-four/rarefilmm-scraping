@@ -95,7 +95,7 @@ def movies_to_html_block(movies, search_movie=None):
     """
     html_block = genhtml.generate_html_block({
                     "score": '',
-                    "year": search_movie['year'],
+                    "year": f"({search_movie['year']})",
                     "title": search_movie["title"], 
                     "poster": select_poster(search_movie), 
                     "overview": search_movie["description"],
@@ -106,7 +106,7 @@ def movies_to_html_block(movies, search_movie=None):
         html_block = html_block + \
                 genhtml.generate_html_block({
                     "score": "{:0.2f}".format(film['sim']),
-                    "year": int(film['year']),
+                    "year": f"({int(film['year'])}) -",
                     "title": film["title"], 
                     "poster": select_poster(film), 
                     "overview": film["description"],
@@ -141,7 +141,12 @@ def home():
         except:
             how_many_recommendations = 5
         search_movie = request.form.get("movies")
-        search_movie_res, recommended_movies = movie_recommendation.get_movie_recommendations(search_movie, how_many_recommendations)
+        try:
+            search_movie_res, recommended_movies = movie_recommendation.get_movie_recommendations(search_movie, how_many_recommendations)
+        except:
+            search_movie_res, recommended_movies = None, None
+            display_html = give_error_page()
+            search_report = ""
         # movies = [cm.df.iloc[randint(0,cm.df.shape[0]-1)] for x in range(how_many_recommendations)] # totally just at random for now.
         if not recommended_movies: # nothing turned up.
             display_html = give_error_page()
@@ -171,4 +176,3 @@ if __name__ == "__main__":
     #webbrowser.open_new_tab("http://127.0.0.1:5000")
     # w2v.initialize_docs()
     app.run(debug=False, port=5000)
-   
