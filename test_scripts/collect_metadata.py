@@ -34,7 +34,6 @@ def get_detailed_movie_info(id):
         return eval(text)
     except Exception as e:
         print('Error occurred: ', e)
-        print(text)
 
 def cut_documentaries(req_dict):
     """
@@ -66,7 +65,6 @@ def get_search_results(movie_list, genres=None):
     results = []
     
     for i, (movie, genre) in enumerate(zip(movie_list, genres)):
-        print("getting data for " + movie + " number " + str(i) + " out of " + str(len(movie_list)))
         if genre == "Documentary":
             results.append(search_and_parse(movie))
         else:
@@ -125,7 +123,6 @@ class Movie:
     def __init__(self, search_results, from_rarefilmm=False, df=None):
         self.from_rarefilmm = from_rarefilmm
         self.df = df # in case we search from the rarefilmm df, then this is the row.
-        print('df: ', self.df)
         self.select_movie(search_results, from_rarefilmm) # set self.metadata
 
         if self.metadata:
@@ -154,7 +151,6 @@ class Movie:
                 self.release_date = df["year"]
                 self.poster = df["poster-path"]
                 self.description = df["description"]
-        print("extracted data for " + self.title)
         
     def extract_data(self):
         """
@@ -188,8 +184,6 @@ class Movie:
                 self.poster = None
         if self.metadata["production_countries"] and len(self.metadata["production_countries"]) > 0:
             countries = []
-            if len(self.metadata["production_countries"]) > 1:
-                print('More than two countries: ', self.title)
             for country in self.metadata["production_countries"]:
                 countries.append(country['name'].lower())
             self.countries = countries
@@ -228,7 +222,6 @@ class Movie:
             for result in search_results:
                 genre_ids = result["genre_ids"]
                 result = get_detailed_movie_info(result['id'])
-                print('Detailed info: ', result)
                 if not result:
                     continue
                 result['genre_ids'] = genre_ids
@@ -254,7 +247,6 @@ class Movie:
                 self.metadata = None
             else:
                 result = get_detailed_movie_info(search_results[0]['id'])
-                print('Detailed info: ', result)
                 result['genre_ids'] = search_results[0]['genre_ids']
                 self.metadata = result
                 
@@ -289,7 +281,6 @@ class Movie:
         genre_onehot = {}
         onehot = self.get_onehot_genres()
         for i, genre in enumerate(tmdb_genres):
-            # print("genre: ", genre)
             genre_onehot[genre["name"]] = onehot[i]
         self.genre_onehot = genre_onehot
         
@@ -303,21 +294,11 @@ class Movie:
     def get_df_row(self):
         try:
             data = {"title": self.title, "description": self.description, "country": self.countries, "tmdb_id": self.tmdb_id, "poster": self.poster, "release_year": self.release_year, "vote_average": self.vote_average, "vote_count": self.vote_count}
-            if not self.genre_onehot:
-                print("No genre_onehot found for " + self.title)
-                print(self.get_onehot_genres())
-                print(self.df)
-            elif not self.countries_onehot:
-                print("No country_onehot found for " + self.title)
-                print(self.get_onehot_countries())
-                print(self.df)
             data = {**data, **self.genre_onehot}
             data = {**data, **self.countries_onehot}
             return pd.Series(data=data, index=data.keys())
         except Exception as e:
             print("error happened: ", e)
-            print(self.genre_onehot)
-            print(self.countries_onehot)
             return pd.Series(data={"title": self.title}, index=["title"])
         
     def __str__(self):
