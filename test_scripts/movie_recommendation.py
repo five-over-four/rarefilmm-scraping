@@ -11,6 +11,9 @@ def get_movie_recommendations(movie_name, n_recs):
     global df
     movies = cm.get_movies([movie_name])
     movie = movies[0]
+    if not movie.title:
+        new_df = None
+        return
     df_row = movie.get_df_row()
     new_df = pd.concat([df, df_row.to_frame().T], ignore_index=True)
     new_df.dropna(axis=0, inplace=True, subset=new_df.columns.difference(['country'])) # drop rows with at least one missing values with the exception of specified columns
@@ -23,12 +26,9 @@ def get_movie_recommendations(movie_name, n_recs):
     new_df = w2v.create_w2v_vector(cmp_movie, new_df)
     feature_df = new_df.drop(columns=["country", 'tmdb_id', 'description', 'title', 'poster'])
     cmp_movie = feature_df.iloc[-1:]
-    print('cmp_movie: ', cmp_movie)
-    print(new_df.iloc[-1:])
     feature_df.drop(feature_df.tail(1).index,inplace=True)
     result = recommend(feature_df, cmp_movie, n_recs)
     recommended_movies = []
-    print('result index: ', result.index)
     for i in result.index:
         recommended_movies.append(new_df.loc[i])
         # print(new_df.iloc[i])
@@ -50,8 +50,6 @@ def cosine_sim(v1,v2):
 def recommend(new_df, comparison, n_rec):
         # calculate similarity of input book_id vector w.r.t all other vectors
         inputVec = comparison.values
-        print('inputvec: ', inputVec)
-        print('inputvec shape: ', inputVec.shape)
         new_df['sim']= new_df.apply(lambda x: cosine_sim(inputVec, x.values), axis=1)
         # returns top n user specified books
         return new_df.nlargest(columns='sim',n=n_rec)
