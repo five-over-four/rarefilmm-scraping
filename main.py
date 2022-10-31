@@ -105,8 +105,8 @@ def movies_to_html_block(movies, search_movie=None):
     for film in movies:
         html_block = html_block + \
                 genhtml.generate_html_block({
-                    "score": "{:0.2f}".format(film['sim']),
-                    "year": f"({int(film['year'])}) -",
+                    "score": "",
+                    "year": f"({int(film['year'])})",
                     "title": film["title"], 
                     "poster": select_poster(film), 
                     "overview": film["description"],
