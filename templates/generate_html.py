@@ -22,7 +22,7 @@ def generate_html_block(movie):
 
                 <div class='details'>
 
-                    <h1>{movie["title"]} {movie["year"]}</h1>
+                    <h1>{movie["title"]} ({movie["year"]}) - {movie["score"]}</h1>
 
                 {movie["overview"]}
 

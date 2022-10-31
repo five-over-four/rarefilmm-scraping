@@ -30,8 +30,8 @@ def select_genres(df):
     RF genre. In this case, select the RF genre. Otherwise, get all the genres
     on TMDB.
     """
-    if (df.iloc[11:] == 0).all(): # this is the one-hot columns.
-        return df["genre"]
+    # if (df.iloc[11:] == 0).all(): # this is the one-hot columns.
+    #     return df["genre"]
     new_df = df.loc['Action':'Western']
     return ", ".join(new_df[new_df == 1].index.format())
 
@@ -64,6 +64,7 @@ def give_front_page():
     This is the default information on the /home page when first starting the application.
     """
     return genhtml.generate_html_block({"poster": "http://rarefilmm.com/wp-content/uploads/2017/07/rrflogo.png",
+            "score": "",
             "year": "",
             "title": "Welcome!",
             "overview": "Search for a movie below to get recommendations from the <a href='https://rarefilmm.com'>Rarefilmm</a> database! \
@@ -79,23 +80,33 @@ def give_error_page():
     We'll probably need *some* error page at the end, no matter what.
     """
     return genhtml.generate_html_block({"poster": "http://rarefilmm.com/wp-content/uploads/2017/07/rrflogo.png",
+            "score": "",
             "year": "",
             "title": "Nothing found in the search!",
             "overview": "Your search yielded no results from the TMDB database; try a different query.",
             "genre": "",
             "country": ""})
 
-def movies_to_html_block(movies):
+def movies_to_html_block(movies, search_movie=None):
     """
     takes a list of rf_data.csv rows and turns them into
     html blocks that can be inserted into home.html, using
     generate_html.generate_html_block().
     """
-    html_block = ""
+    html_block = genhtml.generate_html_block({
+                    "score": '',
+                    "year": search_movie['year'],
+                    "title": search_movie["title"], 
+                    "poster": select_poster(search_movie), 
+                    "overview": search_movie["description"],
+                    "genre": f'Genres: {select_genres(search_movie)}',
+                    "country": f'Countries: {format_countries(search_movie)}'
+                }) + "<hr>"
     for film in movies:
         html_block = html_block + \
                 genhtml.generate_html_block({
-                    "year": f"({format_date(film['release_year'])})",
+                    "score": "{:0.2f}".format(film['sim']),
+                    "year": int(film['year']),
                     "title": film["title"], 
                     "poster": select_poster(film), 
                     "overview": film["description"],
@@ -130,14 +141,15 @@ def home():
         except:
             how_many_recommendations = 5
         search_movie = request.form.get("movies")
-        recommended_movies = movie_recommendation.get_movie_recommendations(search_movie, how_many_recommendations)
+        search_movie_res, recommended_movies = movie_recommendation.get_movie_recommendations(search_movie, how_many_recommendations)
         # movies = [cm.df.iloc[randint(0,cm.df.shape[0]-1)] for x in range(how_many_recommendations)] # totally just at random for now.
         if not recommended_movies: # nothing turned up.
             display_html = give_error_page()
             search_report = ""
         else:
-            display_html = movies_to_html_block(recommended_movies)
-            search_report = f"Recommendations based on '{search_movie}':"
+            search_movie = search_movie_res.iloc[0]
+            display_html = movies_to_html_block(recommended_movies, search_movie)
+            search_report = f"Recommendations based on {search_movie['title']}:"
 
     return render_template("home.html", display_html=display_html, random_background=background_poster, search_report=search_report, numbers=[*range(1,11)])
 

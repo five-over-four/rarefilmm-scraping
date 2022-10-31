@@ -20,6 +20,7 @@ def get_movie_recommendations(movie_name, n_recs):
     new_df.reset_index(drop=True, inplace=True)
     new_df["vote_average"] = w2v.normalize(new_df["vote_average"])
     new_df["vote_count"] = w2v.normalize(new_df["vote_count"])
+    years = new_df["release_year"]
     new_df["release_year"] = w2v.normalize(new_df["release_year"])
     # new_df = w2v.normalize_onehots(new_df)
     cmp_movie = new_df.iloc[-1:]
@@ -27,17 +28,13 @@ def get_movie_recommendations(movie_name, n_recs):
     feature_df = new_df.drop(columns=["country", 'tmdb_id', 'description', 'title', 'poster'])
     cmp_movie = feature_df.iloc[-1:]
     feature_df.drop(feature_df.tail(1).index,inplace=True)
-    result = recommend(feature_df, cmp_movie, n_recs)
+    feature_df, result = recommend(feature_df, cmp_movie, n_recs)
     recommended_movies = []
+    new_df['sim'] = feature_df['sim']
+    new_df["year"] = years
     for i in result.index:
         recommended_movies.append(new_df.loc[i])
-        # print(new_df.iloc[i])
-    return recommended_movies
-
-
-
-
-# df.sort_values(by=['similarity_score'], inplace=True, ascending=False)
+    return new_df.iloc[-1:], recommended_movies
 
 
 def cosine_sim(v1,v2):
@@ -52,7 +49,7 @@ def recommend(new_df, comparison, n_rec):
         inputVec = comparison.values
         new_df['sim']= new_df.apply(lambda x: cosine_sim(inputVec, x.values), axis=1)
         # returns top n user specified books
-        return new_df.nlargest(columns='sim',n=n_rec)
+        return new_df, new_df.nlargest(columns='sim',n=n_rec)
     
     # result.loc[i]['title'] = df.loc[i]['title']
     # result.loc[i]['description'] = df.loc[i]['description']
